@@ -1,6 +1,6 @@
 # Hướng Dẫn Cài Đặt Tự Động Gửi Email Đặt Phòng Về Lễ Tân
 **Khách sạn:** Brume Hotel Đà Lạt — 44 Hồ Tùng Mậu  
-**Email nhận thông báo hiện tại:** `lexuanminhtufw@gmail.com`  
+**Email nhận thông báo hiện tại:** `octieuwayway@gmail.com`  
 **Chi phí:** 100% Miễn phí trọn đời (sử dụng Google Sheets & Google Apps Script chính chủ của Google)
 
 ---
@@ -10,7 +10,7 @@
 2. **Khách hàng**: Lập tức thấy thông báo thành công đẹp mắt:  
    *"✓ Đã chuyển thông tin tới Lễ tân Brume Hotel thành công! Lễ tân sẽ gọi điện hoặc nhắn Zalo xác nhận phòng cho bạn trong ít phút."*
 3. **Lễ tân Khách sạn**:
-   * Nhận ngay một **Email HTML thông báo đặt phòng mới** gửi thẳng vào hòm thư Gmail của lễ tân (`lexuanminhtufw@gmail.com`).
+   * Nhận ngay một **Email HTML thông báo đặt phòng mới** gửi thẳng vào hòm thư Gmail của lễ tân (`octieuwayway@gmail.com`).
    * Email có sẵn 2 nút: **"📞 Gọi khách ngay"** và **"💬 Mở Zalo nhắn khách"** để lễ tân xử lý chỉ bằng 1 cú chạm trên điện thoại.
    * Đồng thời, 1 dòng dữ liệu mới tự động lưu vào file **Google Sheets** để khách sạn theo dõi lịch phòng tổng thể.
 
@@ -38,7 +38,7 @@ Bảng tính đã có sẵn:
 ### Bước 2: Dán mã Script
 1. Xóa hết các dòng chữ mặc định đang có trong ô soạn thảo (`function myFunction() {...}`).
 2. Mở file `scripts/google-apps-script-booking.js` trong thư mục mã nguồn website, **copy toàn bộ nội dung** và dán vào Apps Script.
-   *(Mã đã được cấu hình sẵn email nhận: `const EMAIL_LE_TAN = "lexuanminhtufw@gmail.com";`)*
+   *(Mã đã được cấu hình sẵn email nhận: `const EMAIL_LE_TAN = "octieuwayway@gmail.com";`)*
 3. Bấm biểu tượng 💾 **Lưu** (Save) trên thanh công cụ (hoặc nhấn Ctrl+S / Cmd+S).
 
 ---
@@ -71,5 +71,6 @@ const HOTEL = {
 };
 ```
 Sau khi gắn URL, mọi yêu cầu từ website sẽ ngay lập tức:
-- 📩 Gửi email thông báo HTML có nút Gọi & Zalo về `lexuanminhtufw@gmail.com`.
+- 📩 Gửi email thông báo HTML có nút Gọi & Zalo về `octieuwayway@gmail.com`.
 - 📊 Tự động điền 1 dòng mới vào file Google Sheets [Brume Hotel - Quản Lý Đặt Phòng](https://docs.google.com/spreadsheets/d/106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU/edit).
+

@@ -17,7 +17,7 @@
  */
 
 // CẤU HÌNH ĐỊA CHỈ EMAIL NHẬN THÔNG BÁO (có thể điền 1 hoặc nhiều email cách nhau bởi dấu phẩy)
-const EMAIL_LE_TAN = "lexuanminhtufw@gmail.com"; // Email Lễ tân nhận thông báo đặt phòng
+const EMAIL_LE_TAN = "octieuwayway@gmail.com"; // Email Lễ tân nhận thông báo đặt phòng
 
 function doPost(e) {
   try {
