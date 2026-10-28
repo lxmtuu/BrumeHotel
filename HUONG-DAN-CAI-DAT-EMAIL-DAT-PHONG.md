@@ -57,8 +57,8 @@ Bảng tính đã có sẵn:
 
 ---
 
-### Bước 4: Cập nhật URL vào Website
-Mở file `assets/js/app.js` trên website (hoặc gửi URL đó cho tớ để tớ dán giúp bạn), thay vào dòng `bookingEndpoint`:
+### Bước 4: Cập nhật URL vào Website (ĐÃ HOÀN TẤT ✓)
+URL Webhook của bạn đã được gắn trực tiếp vào file `assets/js/app.js`:
 ```javascript
 const HOTEL = {
   phone: "0778888525",
@@ -66,11 +66,10 @@ const HOTEL = {
   zalo: "https://zalo.me/0778888525",
   facebook: "https://www.facebook.com/profile.php?id=61588141471436",
   maps: "https://www.google.com/maps/dir/...",
-  // Dán Web App URL của Bước 3 vào đây:
-  bookingEndpoint: "https://script.google.com/macros/s/AKfycbx.../exec",
+  bookingEndpoint: "https://script.google.com/macros/s/AKfycbzKNXFNw4kKtBCzoAJBhyUHPcEI6DK572534qX6-Iotmq0H-FAfJBe4ZbWF3hZRDzsC/exec",
 };
 ```
-Sau khi gắn URL, mọi yêu cầu từ website sẽ ngay lập tức:
+Từ thời điểm này, mọi yêu cầu đặt phòng từ website sẽ ngay lập tức:
 - 📩 Gửi email thông báo HTML có nút Gọi & Zalo về `octieuwayway@gmail.com`.
 - 📊 Tự động điền 1 dòng mới vào file Google Sheets [Brume Hotel - Quản Lý Đặt Phòng](https://docs.google.com/spreadsheets/d/106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU/edit).
 

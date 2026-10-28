@@ -11,7 +11,8 @@ const HOTEL = {
   maps:
     "https://www.google.com/maps/dir/?api=1&destination=Brume+Dalat+Hotel+Central,+44+H%E1%BB%93+T%C3%B9ng+M%E1%BA%ADu,+%C4%90%C3%A0+L%E1%BA%A1t",
   // Điểm nhận dữ liệu đặt phòng tự động (Google Sheets Script / Webhook Telegram / Formspree / Supabase)
-  bookingEndpoint: "",
+  bookingEndpoint:
+    "https://script.google.com/macros/s/AKfycbzKNXFNw4kKtBCzoAJBhyUHPcEI6DK572534qX6-Iotmq0H-FAfJBe4ZbWF3hZRDzsC/exec",
 };
 
 const SEASONS = {
