@@ -47,11 +47,25 @@ test('day-of-week labels are distinct from seasons and holiday rates', () => {
   const sheet = roomSheetHTML(ROOMS[0]);
   assert.match(sheet, /Ngày thường <span class="cap">CN–T5<\/span>/);
   assert.match(sheet, /Cuối tuần <span class="cap">T6–T7<\/span>/);
-  assert.match(sheet, /scope="row">Lễ<\/th><td colspan="2">850\.000₫/);
-  assert.match(sheet, /scope="row">Tết<\/th><td colspan="2">1\.200\.000₫/);
+  const peakRows = [...sheet.matchAll(/scope="row">(Lễ|Tết)<\/th><td colspan="2">(.*?)<\/td>/g)];
+  assert.deepEqual(peakRows.map((row) => row[1]), ['Lễ', 'Tết']);
+  assert.match(peakRows[0][2], /850\.000₫/);
+  assert.match(peakRows[1][2], /1\.200\.000₫/);
+  peakRows.forEach((row) => assert.match(row[2], /giá riêng/));
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   assert.match(html, /ngày thường là Chủ nhật–thứ Năm/);
   assert.match(html, /cuối tuần là thứ Sáu–thứ Bảy/);
   assert.equal((html.match(/Ngày thường<span>CN–T5<\/span>/g) || []).length, 2);
   assert.equal((html.match(/Cuối tuần<span>T6–T7<\/span>/g) || []).length, 2);
+});
+
+test('price sheet columns are laid out as equal, right-aligned columns', () => {
+  const css = fs.readFileSync(path.join(root, 'assets/css/style.css'), 'utf8');
+  const block = css.slice(css.indexOf('.mini-table {'), css.indexOf('.room-sheet__actions {'));
+  assert.match(block, /table-layout:\s*fixed/);
+  assert.match(block, /\.mini-table thead th:first-child \{[^}]*width:\s*40%/);
+  assert.match(block, /\.mini-table thead th:nth-child\(2\),\s*\.mini-table thead th:nth-child\(3\) \{[^}]*width:\s*30%/);
+  // Nhãn cột phải canh phải để trùng mép với số tiền bên dưới.
+  assert.match(block, /color:\s*var\(--brass\);\s*white-space:\s*nowrap;[\s\S]*?text-align:\s*right/);
+  assert.doesNotMatch(block, /\.mini-table thead th \{[^}]*text-align:\s*left/);
 });
