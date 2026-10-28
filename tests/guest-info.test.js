@@ -147,3 +147,61 @@ test('request without children does not include ages and room cards update warni
   assert.match(message, /Trẻ từ 6 đến dưới 12 tuổi: 0/);
   assert.doesNotMatch(message, /Tuổi trẻ/);
 });
+
+test('vehicle choice updates message and advice for reception', () => {
+  const { api, get } = makeApp();
+  api.initDates();
+  api.initGuestFields();
+  api.initRequestForm();
+
+  get('rVehicle').value = 'car';
+  get('rVehicle').emit('change');
+  assert.equal(get('vehicleHint').hidden, false);
+  assert.match(get('vehicleHint').innerHTML, /bãi gửi xe/);
+
+  get('rName').value = 'Trần Bình';
+  get('rPhone').value = '0988776655';
+  get('requestForm').emit('submit');
+  assert.match(get('requestText').textContent, /• Phương tiện: Đi ô tô riêng \(nhờ lễ tân tư vấn chỗ đỗ \/ bãi gửi xe\)/);
+
+  get('rVehicle').value = 'car_4';
+  get('rVehicle').emit('change');
+  assert.equal(get('vehicleHint').hidden, false);
+  assert.match(get('vehicleHint').innerHTML, /ô tô 4 chỗ/);
+
+  get('rVehicle').value = 'car_7';
+  get('rVehicle').emit('change');
+  assert.equal(get('vehicleHint').hidden, false);
+  assert.match(get('vehicleHint').innerHTML, /ô tô 7 chỗ/);
+
+  get('rVehicle').value = 'motorbike';
+  get('rVehicle').emit('change');
+  assert.match(get('vehicleHint').innerHTML, /khu vực để xe máy an toàn/);
+
+  get('rVehicle').value = 'rent_bike';
+  get('rVehicle').emit('change');
+  assert.match(get('vehicleHint').innerHTML, /thuê xe máy/);
+});
+
+test('multi-room selection updates extra room fields, message, and combined capacity', () => {
+  const { api, get } = makeApp();
+  api.initDates();
+  api.initGuestFields();
+  api.initRequestForm();
+
+  assert.equal(get('extraRoomsContainer').hidden, true);
+
+  get('rRoomCount').value = '2';
+  get('rRoomCount').emit('change');
+  assert.equal(get('extraRoomsContainer').hidden, false);
+
+  get('rRoom').value = 'superior';
+  get('rRoom').emit('change');
+
+  get('rName').value = 'Lê Minh';
+  get('rPhone').value = '0912345678';
+  get('requestForm').emit('submit');
+
+  assert.match(get('requestText').textContent, /• Số lượng phòng: 2 phòng/);
+  assert.match(get('requestText').textContent, /Phòng 1: Superior Double/);
+});
