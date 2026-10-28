@@ -444,13 +444,20 @@ function roomSheetHTML(room) {
       <div class="room-sheet__media">
         <div class="room-sheet__main">
           <img id="roomMainImg" src="${imgPath(room.images[0])}" alt="${room.name} — ảnh 1" />
+          <button class="room-sheet__nav room-sheet__nav--prev" type="button" aria-label="Xem ảnh trước">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="room-sheet__nav room-sheet__nav--next" type="button" aria-label="Xem ảnh sau">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="room-sheet__counter" id="roomImgCounter">1 / ${room.images.length}</span>
         </div>
         <div class="room-sheet__thumbs">
           ${room.images
             .map(
               (img, i) => `
             <button class="room-sheet__thumb ${i === 0 ? "is-active" : ""}" type="button"
-                    data-img="${img}" data-alt="${room.name} — ảnh ${i + 1}" aria-label="Ảnh ${i + 1}">
+                    data-img="${img}" data-index="${i}" data-alt="${room.name} — ảnh ${i + 1}" aria-label="Ảnh ${i + 1}">
               <img src="${imgPath(img)}" alt="" loading="lazy" />
             </button>`
             )
@@ -464,10 +471,10 @@ function roomSheetHTML(room) {
         <p class="room-sheet__code">Phòng ${room.code}</p>
         <p class="room-sheet__desc">${room.desc}</p>
         <ul class="spec-list">
-          <li><span>Diện tích</span><strong>${room.area} m²</strong></li>
-          <li><span>Giường</span><strong>${room.bed}</strong></li>
-          <li><span>Sức chứa</span><strong>${room.capacity}</strong></li>
-          <li><span>Số phòng</span><strong>${room.code.split(",").length} phòng</strong></li>
+          <li><span class="spec-label"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 9h18M9 21V9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Diện tích</span><strong>${room.area} m²</strong></li>
+          <li><span class="spec-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Giường</span><strong>${room.bed}</strong></li>
+          <li><span class="spec-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Sức chứa</span><strong>${room.capacity}</strong></li>
+          <li><span class="spec-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.5 12.5 8-8M15 8l3 3M18.5 4.5l1 1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>Số phòng</span><strong>${room.code.split(",").length} phòng</strong></li>
         </ul>
         <table class="mini-table">
           <thead>
@@ -483,29 +490,67 @@ function roomSheetHTML(room) {
         <div class="room-sheet__actions">
           <button class="btn btn--solid" type="button" data-book="${room.slug}">Đặt phòng này</button>
           <a class="btn btn--ghost" href="tel:${HOTEL.phone}">Gọi ${HOTEL.phoneLabel}</a>
+          <a class="btn btn--ghost" href="https://zalo.me/0778888525" target="_blank" rel="noopener">Nhắn Zalo</a>
         </div>
       </div>
     </div>`;
 }
 
+let currentRoomSlug = null;
+let currentRoomImgIndex = 0;
+
+function showRoomImage(index) {
+  const room = roomBySlug(currentRoomSlug);
+  if (!room) return;
+  const count = room.images.length;
+  currentRoomImgIndex = (index + count) % count;
+  const imgName = room.images[currentRoomImgIndex];
+  const main = $("#roomMainImg");
+  if (main) {
+    main.src = imgPath(imgName);
+    main.alt = `${room.name} — ảnh ${currentRoomImgIndex + 1}`;
+  }
+  const counter = $("#roomImgCounter");
+  if (counter) {
+    counter.textContent = `${currentRoomImgIndex + 1} / ${count}`;
+  }
+  const modal = $("#roomModal") || roomModal;
+  if (modal) {
+    $$(".room-sheet__thumb", modal).forEach((t, i) => {
+      t.classList.toggle("is-active", i === currentRoomImgIndex);
+    });
+  }
+}
+
 function openRoom(slug) {
   const room = roomBySlug(slug);
   if (!room) return;
+  currentRoomSlug = slug;
+  currentRoomImgIndex = 0;
   const body = $("#roomBody");
   if (body) body.innerHTML = roomSheetHTML(room);
   const modal = $("#roomModal") || roomModal;
   if (modal) {
     openModal(modal);
-    $$(".room-sheet__thumb", modal).forEach((thumb) => {
+    $$(".room-sheet__thumb", modal).forEach((thumb, i) => {
       thumb.addEventListener("click", () => {
-        const main = $("#roomMainImg");
-        if (main) {
-          main.src = imgPath(thumb.dataset.img);
-          main.alt = thumb.dataset.alt;
-        }
-        $$(".room-sheet__thumb", modal).forEach((t) => t.classList.toggle("is-active", t === thumb));
+        showRoomImage(i);
       });
     });
+    const prevBtn = $(".room-sheet__nav--prev", modal);
+    if (prevBtn) {
+      prevBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showRoomImage(currentRoomImgIndex - 1);
+      });
+    }
+    const nextBtn = $(".room-sheet__nav--next", modal);
+    if (nextBtn) {
+      nextBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        showRoomImage(currentRoomImgIndex + 1);
+      });
+    }
   }
 }
 
@@ -1046,6 +1091,12 @@ function initGlobalEvents() {
     if (lb && !lb.hidden) {
       if (e.key === "ArrowLeft") stepLightbox(-1);
       if (e.key === "ArrowRight") stepLightbox(1);
+    } else {
+      const rm = $("#roomModal") || roomModal;
+      if (rm && !rm.hidden) {
+        if (e.key === "ArrowLeft") showRoomImage(currentRoomImgIndex - 1);
+        if (e.key === "ArrowRight") showRoomImage(currentRoomImgIndex + 1);
+      }
     }
   });
 }
@@ -1075,6 +1126,16 @@ function initHeader() {
   }
 
   $$("#nav a").forEach((a) => a.addEventListener("click", closeNav));
+
+  const backToTop = $("#backToTop");
+  if (backToTop) {
+    backToTop.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    window.addEventListener("scroll", () => {
+      backToTop.hidden = window.scrollY < 260;
+    }, { passive: true });
+  }
 }
 
 function closeNav() {
