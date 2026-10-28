@@ -10,6 +10,8 @@ const HOTEL = {
   facebook: "https://www.facebook.com/profile.php?id=61588141471436",
   maps:
     "https://www.google.com/maps/dir/?api=1&destination=Brume+Dalat+Hotel+Central,+44+H%E1%BB%93+T%C3%B9ng+M%E1%BA%ADu,+%C4%90%C3%A0+L%E1%BA%A1t",
+  // Điểm nhận dữ liệu đặt phòng tự động (Google Sheets Script / Webhook Telegram / Formspree / Supabase)
+  bookingEndpoint: "",
 };
 
 const SEASONS = {
@@ -1047,6 +1049,27 @@ function initRequestForm() {
 
     // Tự động sao chép thông tin vào bộ nhớ tạm
     copyTextToClipboard(message);
+
+    // Cập nhật link SMS tự động điền sẵn 100% nội dung
+    const smsBtn = $("#smsBtn");
+    if (smsBtn) {
+      smsBtn.href = `sms:${HOTEL.phone}?&body=${encodeURIComponent(message)}`;
+    }
+
+    // Nếu có cấu hình bookingEndpoint (Google Sheets / Webhook), tự động gửi ngầm về lễ tân
+    if (HOTEL.bookingEndpoint) {
+      try {
+        fetch(HOTEL.bookingEndpoint, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            created_at: new Date().toISOString(),
+          }),
+        });
+      } catch {}
+    }
 
     // Tự động mở Zalo tới số điện thoại của Brume Hotel
     const zaloUrl = `https://zalo.me/${HOTEL.phone}`;
