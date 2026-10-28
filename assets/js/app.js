@@ -1029,6 +1029,61 @@ async function copyTextToClipboard(text) {
   return false;
 }
 
+function getBookingPayload() {
+  const nameEl = $("#rName");
+  const phoneEl = $("#rPhone");
+  const ciEl = $("#rCi");
+  const coEl = $("#rCo");
+  const adultsEl = $("#rAdults");
+  const youngEl = $("#rChildrenYoung");
+  const olderEl = $("#rChildrenOlder");
+  const rRoomEl = $("#rRoom");
+  const noteEl = $("#rNote");
+  const vehicleEl = $("#rVehicle");
+
+  const name = nameEl ? nameEl.value.trim() : "";
+  const phone = phoneEl ? phoneEl.value.trim() : "";
+  const ci = ciEl ? ciEl.value : "";
+  const co = coEl ? coEl.value : "";
+  const adults = adultsEl ? adultsEl.value : "2";
+  const childrenYoung = youngEl ? youngEl.value : "0";
+  const childrenOlder = olderEl ? olderEl.value : "0";
+  const childAges = $$("#childAges select[data-child-age]");
+  const roomValue = rRoomEl ? rRoomEl.value : "";
+  const room = roomValue ? roomBySlug(roomValue) : null;
+  const note = noteEl ? noteEl.value.trim() : "";
+  const vehicle = vehicleEl ? vehicleEl.value : "";
+  const vehicleMap = {
+    car: "Đi ô tô riêng (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    motorbike: "Đi xe máy cá nhân (cần chỗ gửi xe tại khách sạn)",
+    rent_bike: "Cần thuê xe máy tại khách sạn (giao xe tại khách sạn)",
+    transit: "Đi máy bay / xe khách (nhờ tư vấn đón / gửi hành lý sớm)",
+  };
+
+  const nights = ci && co ? Math.round((new Date(co) - new Date(ci)) / 86400000) : 0;
+  const agesYoung = childAges.filter((s) => s.dataset.childGroup === "young")
+    .map((s) => s.value === "0" ? "dưới 1 tuổi" : `${s.value} tuổi`);
+  const agesOlder = childAges.filter((s) => s.dataset.childGroup === "older")
+    .map((s) => s.value === "0" ? "dưới 1 tuổi" : `${s.value} tuổi`);
+
+  return {
+    name,
+    phone,
+    checkin: fmtDate(ci),
+    checkout: fmtDate(co),
+    nights,
+    room: room ? room.name : "Chưa chọn (nhờ Brume tư vấn)",
+    adults: Number(adults) || 2,
+    childrenYoung: Number(childrenYoung) || 0,
+    childrenOlder: Number(childrenOlder) || 0,
+    childAges: [...agesYoung, ...agesOlder].join(", ") || "Không có",
+    vehicle: vehicleMap[vehicle] || "Không có phương tiện riêng",
+    note: note || "Không có",
+    fullMessage: buildMessage(),
+    createdAt: new Date().toISOString(),
+  };
+}
+
 function initRequestForm() {
   const form = $("#requestForm") || requestForm;
   if (!form) return;
@@ -1056,18 +1111,19 @@ function initRequestForm() {
       smsBtn.href = `sms:${HOTEL.phone}?&body=${encodeURIComponent(message)}`;
     }
 
-    // Nếu có cấu hình bookingEndpoint (Google Sheets / Webhook), tự động gửi ngầm về lễ tân
+    // Nếu có cấu hình bookingEndpoint (Google Sheets / Email Webhook), tự động gửi ngầm về lễ tân
     if (HOTEL.bookingEndpoint) {
       try {
         fetch(HOTEL.bookingEndpoint, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message,
-            created_at: new Date().toISOString(),
-          }),
+          body: JSON.stringify(getBookingPayload()),
         });
+        const statusEl = $("#requestStatus");
+        if (statusEl) {
+          statusEl.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Đã tự động gửi thông tin đặt phòng tới <strong>Email Lễ tân Brume Hotel</strong>! Lễ tân sẽ liên hệ xác nhận phòng cho bạn trong ít phút.</span>`;
+        }
       } catch {}
     }
 
