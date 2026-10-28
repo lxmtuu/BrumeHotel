@@ -2613,3 +2613,170 @@ body:not(.js-ready) #galleryGrid {
     flex: 1;
   }
 }
+
+/* =========================================================
+   Multi-page navigation & Page Hero styling
+   ========================================================= */
+
+.nav a.is-active,
+.nav a[aria-current="page"] {
+  opacity: 1;
+  color: var(--brass-2);
+}
+
+.nav a.is-active::after,
+.nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+  background: var(--brass-2);
+}
+
+.site-top.is-stuck .nav a.is-active,
+.site-top.is-stuck .nav a[aria-current="page"] {
+  color: var(--brass);
+}
+
+.site-top.is-stuck .nav a.is-active::after,
+.site-top.is-stuck .nav a[aria-current="page"]::after {
+  background: var(--brass);
+}
+
+.page-hero {
+  position: relative;
+  min-height: clamp(280px, 38svh, 400px);
+  display: flex;
+  align-items: flex-end;
+  padding-top: calc(var(--topbar-h) + var(--header-h) + 24px);
+  padding-bottom: 44px;
+  background: var(--pine-2);
+  color: var(--bone);
+  overflow: hidden;
+}
+
+.page-hero__bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+}
+
+.page-hero__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+.page-hero__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, var(--pine-2) 0%, rgba(23, 47, 39, 0.72) 55%, rgba(15, 26, 22, 0.9) 100%);
+}
+
+.page-hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(247, 242, 231, 0.72);
+  margin-bottom: 12px;
+}
+
+.breadcrumbs a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumbs a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.breadcrumbs span[aria-hidden="true"] {
+  opacity: 0.45;
+}
+
+.page-hero__eyebrow {
+  color: var(--brass-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.page-hero__title {
+  font-family: var(--serif);
+  font-size: clamp(30px, 4.5vw, 48px);
+  line-height: 1.16;
+  margin: 0 0 10px;
+  color: var(--bone);
+}
+
+.page-hero__lead {
+  max-width: 640px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(247, 242, 231, 0.88);
+  margin: 0;
+}
+
+.section-link-wrap {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.section-link-wrap .btn {
+  padding-inline: 28px;
+}
+
+.page-intro-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.intro-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro-card__num {
+  font-family: var(--serif);
+  font-size: 28px;
+  color: var(--brass);
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.intro-card__title {
+  font-family: var(--serif);
+  font-size: 20px;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.intro-card__text {
+  font-size: 14.5px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+@media (max-width: 820px) {
+  .page-intro-cards {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

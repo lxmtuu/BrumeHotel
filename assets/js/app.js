@@ -269,7 +269,9 @@ function cardHTML(room) {
 }
 
 function renderRooms() {
-  $("#roomGrid").innerHTML = ROOMS.map(cardHTML).join("");
+  const grid = $("#roomGrid");
+  if (!grid) return;
+  grid.innerHTML = ROOMS.map(cardHTML).join("");
   applyFilter(currentFilter);
   observeReveals();
 }
@@ -279,21 +281,27 @@ function updatePrices() {
     const card = $(`.room[data-slug="${room.slug}"]`);
     if (!card) return;
     const price = roomPriceDisplay(room);
-    $(".price__label", card).textContent = price.label;
-    $(".price__value", card).textContent = vnd(price.value);
-    $(".price__sub", card).textContent = `${price.otherLabel}: ${vnd(price.otherValue)}/đêm`;
+    const label = $(".price__label", card);
+    if (label) label.textContent = price.label;
+    const val = $(".price__value", card);
+    if (val) val.textContent = vnd(price.value);
+    const sub = $(".price__sub", card);
+    if (sub) sub.textContent = `${price.otherLabel}: ${vnd(price.otherValue)}/đêm`;
   });
 }
 
 function applyFilter(filter) {
   currentFilter = filter;
   let visible = 0;
-  $$(".room", $("#roomGrid")).forEach((card) => {
+  const grid = $("#roomGrid");
+  if (!grid) return;
+  $$(".room", grid).forEach((card) => {
     const show = filter === "all" || card.dataset[filter] === "1";
     card.classList.toggle("is-hidden", !show);
     if (show) visible++;
   });
-  $("#roomsEmpty").hidden = visible > 0;
+  const empty = $("#roomsEmpty");
+  if (empty) empty.hidden = visible > 0;
   $$("#filters .chip").forEach((chip) => {
     chip.classList.toggle("is-active", chip.dataset.filter === filter);
   });
@@ -302,6 +310,8 @@ function applyFilter(filter) {
 /* ---------- Price table ---------- */
 
 function renderPriceTable() {
+  const table = $("#priceTable");
+  if (!table) return;
   const head = `
     <thead>
       <tr>
@@ -334,13 +344,15 @@ function renderPriceTable() {
       </tr>`;
   }).join("");
 
-  $("#priceTable").innerHTML = `<caption class="visually-hidden">Bảng giá 10 hạng phòng theo mùa</caption>${head}<tbody>${body}</tbody>`;
+  table.innerHTML = `<caption class="visually-hidden">Bảng giá 10 hạng phòng theo mùa</caption>${head}<tbody>${body}</tbody>`;
 }
 
 /* ---------- Gallery ---------- */
 
 function renderGallery() {
-  $("#galleryGrid").innerHTML = GALLERY.map(
+  const grid = $("#galleryGrid");
+  if (!grid) return;
+  grid.innerHTML = GALLERY.map(
     (item, i) => `
       <button class="gallery__item" type="button" data-lightbox="${i}" aria-label="Xem ảnh: ${item.cap}">
         <img src="${imgPath(item.img)}" alt="${item.cap}" loading="lazy" decoding="async" />
@@ -369,15 +381,20 @@ function initControls() {
     btn.addEventListener("click", () => {
       selectSeason(btn.dataset.season);
       const status = $("#seasonStatus");
-      status.textContent = `Đang xem ${SEASONS[currentSeason].label.toLowerCase()} thủ công, không đối chiếu theo ngày. Chọn lại ngày để tự động cập nhật.`;
-      status.classList.add("is-unconfirmed");
+      if (status) {
+        status.textContent = `Đang xem ${SEASONS[currentSeason].label.toLowerCase()} thủ công, không đối chiếu theo ngày. Chọn lại ngày để tự động cập nhật.`;
+        status.classList.add("is-unconfirmed");
+      }
     });
   });
 
-  $("#filters").addEventListener("click", (e) => {
-    const chip = e.target.closest(".chip");
-    if (chip) applyFilter(chip.dataset.filter);
-  });
+  const filters = $("#filters");
+  if (filters) {
+    filters.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (chip) applyFilter(chip.dataset.filter);
+    });
+  }
 }
 
 /* ---------- Room detail modal ---------- */
@@ -474,17 +491,22 @@ function roomSheetHTML(room) {
 function openRoom(slug) {
   const room = roomBySlug(slug);
   if (!room) return;
-  $("#roomBody").innerHTML = roomSheetHTML(room);
-  openModal(roomModal);
-
-  $$(".room-sheet__thumb", roomModal).forEach((thumb) => {
-    thumb.addEventListener("click", () => {
-      const main = $("#roomMainImg");
-      main.src = imgPath(thumb.dataset.img);
-      main.alt = thumb.dataset.alt;
-      $$(".room-sheet__thumb", roomModal).forEach((t) => t.classList.toggle("is-active", t === thumb));
+  const body = $("#roomBody");
+  if (body) body.innerHTML = roomSheetHTML(room);
+  const modal = $("#roomModal") || roomModal;
+  if (modal) {
+    openModal(modal);
+    $$(".room-sheet__thumb", modal).forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        const main = $("#roomMainImg");
+        if (main) {
+          main.src = imgPath(thumb.dataset.img);
+          main.alt = thumb.dataset.alt;
+        }
+        $$(".room-sheet__thumb", modal).forEach((t) => t.classList.toggle("is-active", t === thumb));
+      });
     });
-  });
+  }
 }
 
 /* ---------- Booking modal ---------- */
@@ -495,19 +517,26 @@ const requestForm = $("#requestForm");
 function fillRoomSelect() {
   const options = ROOMS.map((r) => `<option value="${r.slug}">${r.name}</option>`).join("");
   const placeholder = `<option value="">Chưa chọn / nhờ tư vấn</option>`;
-  $("#rtype").innerHTML = placeholder + options;
-  $("#rRoom").innerHTML = placeholder + options;
+  ["#rtype", "#rRoom"].forEach((sel) => {
+    const el = $(sel);
+    if (el) el.innerHTML = placeholder + options;
+  });
 }
 
 function renderChildAges() {
   const container = $("#childAges");
+  if (!container) return;
   const previous = { young: [], older: [] };
   $$("select[data-child-age]", container).forEach((select) => {
-    previous[select.dataset.childGroup].push(select.value);
+    if (previous[select.dataset.childGroup]) {
+      previous[select.dataset.childGroup].push(select.value);
+    }
   });
+  const rYoung = $("#rChildrenYoung");
+  const rOlder = $("#rChildrenOlder");
   const groups = [
-    { key: "young", label: "dưới 6 tuổi", start: 0, count: Number($("#rChildrenYoung").value) || 0 },
-    { key: "older", label: "từ 6 đến dưới 12 tuổi", start: 6, count: Number($("#rChildrenOlder").value) || 0 },
+    { key: "young", label: "dưới 6 tuổi", start: 0, count: (rYoung ? Number(rYoung.value) : 0) || 0 },
+    { key: "older", label: "từ 6 đến dưới 12 tuổi", start: 6, count: (rOlder ? Number(rOlder.value) : 0) || 0 },
   ];
   groups.forEach((group) => { group.count = Math.max(0, Math.min(6, group.count)); });
   container.hidden = groups.every((group) => group.count === 0);
@@ -541,20 +570,39 @@ function guestCapacityWarning(room, adults, children) {
 }
 
 function updateGuestWarnings() {
-  const room = roomBySlug($("#rRoom").value);
-  const children = Number($("#rChildrenYoung").value) + Number($("#rChildrenOlder").value);
-  const warning = guestCapacityWarning(room, Number($("#rAdults").value), children);
+  const rRoom = $("#rRoom");
+  const room = rRoom ? roomBySlug(rRoom.value) : null;
+  const rYoung = $("#rChildrenYoung");
+  const rOlder = $("#rChildrenOlder");
+  const rAdults = $("#rAdults");
+  const children = (rYoung ? Number(rYoung.value) : 0) + (rOlder ? Number(rOlder.value) : 0);
+  const adults = rAdults ? Number(rAdults.value) : 2;
+  const warning = guestCapacityWarning(room, adults, children);
   ["#bookGuestWarning", "#requestGuestWarning"].forEach((selector) => {
     const el = $(selector);
+    if (!el) return;
     el.textContent = warning;
     el.hidden = !warning;
+  });
+  $$(".room").forEach((card) => {
+    const cardRoom = roomBySlug(card.dataset.slug);
+    const cardWarn = cardRoom ? guestCapacityWarning(cardRoom, adults, children) : null;
+    const warnEl = $(".room__warning", card);
+    if (warnEl) {
+      warnEl.hidden = !cardWarn;
+      warnEl.textContent = cardWarn || "";
+    }
   });
 }
 
 function syncGuestCounts(fromModal = false) {
   const source = fromModal ? ["#rAdults", "#rChildrenYoung", "#rChildrenOlder"] : ["#adults", "#childrenYoung", "#childrenOlder"];
   const target = fromModal ? ["#adults", "#childrenYoung", "#childrenOlder"] : ["#rAdults", "#rChildrenYoung", "#rChildrenOlder"];
-  source.forEach((selector, i) => { $(target[i]).value = $(selector).value; });
+  source.forEach((selector, i) => {
+    const srcEl = $(selector);
+    const tgtEl = $(target[i]);
+    if (srcEl && tgtEl) tgtEl.value = srcEl.value;
+  });
   renderChildAges();
   updateGuestWarnings();
 }
@@ -562,19 +610,25 @@ function syncGuestCounts(fromModal = false) {
 function syncRoomChoice(fromModal = false) {
   const source = fromModal ? "#rRoom" : "#rtype";
   const target = fromModal ? "#rtype" : "#rRoom";
-  $(target).value = $(source).value;
+  const srcEl = $(source);
+  const tgtEl = $(target);
+  if (srcEl && tgtEl) tgtEl.value = srcEl.value;
   updateGuestWarnings();
 }
 
 function initGuestFields() {
   ["#adults", "#childrenYoung", "#childrenOlder"].forEach((selector) => {
-    $(selector).addEventListener("change", () => syncGuestCounts());
+    const el = $(selector);
+    if (el) el.addEventListener("change", () => syncGuestCounts());
   });
   ["#rAdults", "#rChildrenYoung", "#rChildrenOlder"].forEach((selector) => {
-    $(selector).addEventListener("change", () => syncGuestCounts(true));
+    const el = $(selector);
+    if (el) el.addEventListener("change", () => syncGuestCounts(true));
   });
-  $("#rtype").addEventListener("change", () => syncRoomChoice());
-  $("#rRoom").addEventListener("change", () => syncRoomChoice(true));
+  const rtype = $("#rtype");
+  if (rtype) rtype.addEventListener("change", () => syncRoomChoice());
+  const rRoom = $("#rRoom");
+  if (rRoom) rRoom.addEventListener("change", () => syncRoomChoice(true));
   syncGuestCounts();
 }
 
@@ -682,53 +736,76 @@ function updateSeasonFromDates(checkin, checkout) {
 }
 
 function syncBookingDates(ciSel, coSel, targetCiSel, targetCoSel) {
-  $(targetCiSel).value = $(ciSel).value;
-  $(targetCoSel).value = $(coSel).value;
-  $(targetCiSel).min = todayISO();
-  syncCheckoutMin(targetCiSel, targetCoSel, false);
-  updateSeasonFromDates($(ciSel).value, $(coSel).value);
+  const srcCi = $(ciSel);
+  const srcCo = $(coSel);
+  const tgtCi = $(targetCiSel);
+  const tgtCo = $(targetCoSel);
+  if (srcCi && tgtCi) {
+    tgtCi.value = srcCi.value;
+    tgtCi.min = todayISO();
+  }
+  if (srcCo && tgtCo) {
+    tgtCo.value = srcCo.value;
+  }
+  if (tgtCi && tgtCo) {
+    syncCheckoutMin(targetCiSel, targetCoSel, false);
+  }
+  if (srcCi && srcCo) {
+    updateSeasonFromDates(srcCi.value, srcCo.value);
+  }
 }
 
 function initDates() {
   ["#ci", "#rCi"].forEach((sel) => {
     const input = $(sel);
+    if (!input) return;
     input.min = todayISO();
     if (!input.value) input.value = todayISO(1);
   });
   ["#co", "#rCo"].forEach((sel) => {
     const input = $(sel);
+    if (!input) return;
     input.min = todayISO(1);
     if (!input.value) input.value = todayISO(3);
   });
 }
 
 function openBooking(prefill = {}) {
-  requestForm.hidden = false;
-  $("#requestResult").hidden = true;
-  $("#copyBtn").textContent = "Sao chép";
+  const modal = $("#bookModal") || bookModal;
+  const form = $("#requestForm") || requestForm;
+  if (!modal) return;
+  if (form) form.hidden = false;
+  const res = $("#requestResult");
+  if (res) res.hidden = true;
+  const copy = $("#copyBtn");
+  if (copy) copy.textContent = "Sao chép";
 
-  if (prefill.checkin) $("#rCi").value = prefill.checkin;
-  if (prefill.checkout) $("#rCo").value = prefill.checkout;
-  if (prefill.adults) $("#rAdults").value = prefill.adults;
-  if (prefill.childrenYoung !== undefined) $("#rChildrenYoung").value = prefill.childrenYoung;
-  if (prefill.childrenOlder !== undefined) $("#rChildrenOlder").value = prefill.childrenOlder;
-  if (Object.prototype.hasOwnProperty.call(prefill, "room")) $("#rRoom").value = prefill.room;
+  if (prefill.checkin && $("#rCi")) $("#rCi").value = prefill.checkin;
+  if (prefill.checkout && $("#rCo")) $("#rCo").value = prefill.checkout;
+  if (prefill.adults && $("#rAdults")) $("#rAdults").value = prefill.adults;
+  if (prefill.childrenYoung !== undefined && $("#rChildrenYoung")) $("#rChildrenYoung").value = prefill.childrenYoung;
+  if (prefill.childrenOlder !== undefined && $("#rChildrenOlder")) $("#rChildrenOlder").value = prefill.childrenOlder;
+  if (Object.prototype.hasOwnProperty.call(prefill, "room") && $("#rRoom")) $("#rRoom").value = prefill.room;
   syncRoomChoice(true);
   syncGuestCounts(true);
-  $("#rCi").min = todayISO();
+  const rCi = $("#rCi");
+  if (rCi) rCi.min = todayISO();
   syncCheckoutMin("#rCi", "#rCo");
   syncBookingDates("#rCi", "#rCo", "#ci", "#co");
 
-  openModal(bookModal);
-  $("#rName").focus({ preventScroll: true });
+  openModal(modal);
+  const nameInput = $("#rName");
+  if (nameInput) nameInput.focus({ preventScroll: true });
 }
 
 function syncCheckoutMin(ciSel, coSel, adjustValue = true) {
-  const ci = $(ciSel).value;
-  const co = $(coSel);
+  const ciEl = $(ciSel);
+  const coEl = $(coSel);
+  if (!ciEl || !coEl) return;
+  const ci = ciEl.value;
   const minISO = ci ? addDaysISO(ci, 1) : todayISO(1);
-  co.min = minISO;
-  if (adjustValue && co.value && co.value < minISO) co.value = minISO;
+  coEl.min = minISO;
+  if (adjustValue && coEl.value && coEl.value < minISO) coEl.value = minISO;
 }
 
 function fmtDate(iso) {
@@ -752,21 +829,33 @@ function holidayCalendarHTML() {
 }
 
 function renderHolidayCalendar() {
-  $("#holidayCalendarSummary").innerHTML = holidayCalendarHTML();
+  const summary = $("#holidayCalendarSummary");
+  if (!summary) return;
+  summary.innerHTML = holidayCalendarHTML();
 }
 
 function buildMessage() {
-  const name = $("#rName").value.trim();
-  const phone = $("#rPhone").value.trim();
-  const ci = $("#rCi").value;
-  const co = $("#rCo").value;
-  const adults = $("#rAdults").value;
-  const childrenYoung = $("#rChildrenYoung").value;
-  const childrenOlder = $("#rChildrenOlder").value;
+  const nameEl = $("#rName");
+  const phoneEl = $("#rPhone");
+  const ciEl = $("#rCi");
+  const coEl = $("#rCo");
+  const adultsEl = $("#rAdults");
+  const youngEl = $("#rChildrenYoung");
+  const olderEl = $("#rChildrenOlder");
+  const rRoomEl = $("#rRoom");
+  const noteEl = $("#rNote");
+
+  const name = nameEl ? nameEl.value.trim() : "";
+  const phone = phoneEl ? phoneEl.value.trim() : "";
+  const ci = ciEl ? ciEl.value : "";
+  const co = coEl ? coEl.value : "";
+  const adults = adultsEl ? adultsEl.value : "2";
+  const childrenYoung = youngEl ? youngEl.value : "0";
+  const childrenOlder = olderEl ? olderEl.value : "0";
   const childAges = $$("#childAges select[data-child-age]");
-  const roomValue = $("#rRoom").value;
+  const roomValue = rRoomEl ? rRoomEl.value : "";
   const room = roomValue ? roomBySlug(roomValue) : null;
-  const note = $("#rNote").value.trim();
+  const note = noteEl ? noteEl.value.trim() : "";
 
   const nights = ci && co ? Math.round((new Date(co) - new Date(ci)) / 86400000) : 0;
   const lines = [
@@ -790,43 +879,66 @@ function buildMessage() {
 }
 
 function initRequestForm() {
-  requestForm.addEventListener("submit", (e) => {
+  const form = $("#requestForm") || requestForm;
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-    $("#rCi").min = todayISO();
+    const rCi = $("#rCi");
+    if (rCi) rCi.min = todayISO();
     syncCheckoutMin("#rCi", "#rCo", false);
-    if (!requestForm.reportValidity()) return;
+    if (!form.reportValidity()) return;
 
-    $("#requestText").textContent = buildMessage();
-    requestForm.hidden = true;
-    $("#requestResult").hidden = false;
-    $("#copyBtn").focus({ preventScroll: true });
+    const reqText = $("#requestText");
+    if (reqText) reqText.textContent = buildMessage();
+    form.hidden = true;
+    const reqRes = $("#requestResult");
+    if (reqRes) reqRes.hidden = false;
+    const copy = $("#copyBtn");
+    if (copy) copy.focus({ preventScroll: true });
   });
 
-  $("#rCi").addEventListener("change", () => {
-    syncCheckoutMin("#rCi", "#rCo");
-    syncBookingDates("#rCi", "#rCo", "#ci", "#co");
-  });
-  $("#rCo").addEventListener("change", () => syncBookingDates("#rCi", "#rCo", "#ci", "#co"));
+  const rCi = $("#rCi");
+  if (rCi) {
+    rCi.addEventListener("change", () => {
+      syncCheckoutMin("#rCi", "#rCo");
+      syncBookingDates("#rCi", "#rCo", "#ci", "#co");
+    });
+  }
+  const rCo = $("#rCo");
+  if (rCo) {
+    rCo.addEventListener("change", () => syncBookingDates("#rCi", "#rCo", "#ci", "#co"));
+  }
 
-  $("#copyBtn").addEventListener("click", async () => {
-    const text = $("#requestText").textContent;
-    try {
-      await navigator.clipboard.writeText(text);
-      $("#copyBtn").textContent = "Đã sao chép ✓";
-    } catch {
-      const range = document.createRange();
-      range.selectNodeContents($("#requestText"));
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-      $("#copyBtn").textContent = "Chọn & Ctrl+C để chép";
-    }
-  });
+  const copy = $("#copyBtn");
+  if (copy) {
+    copy.addEventListener("click", async () => {
+      const reqText = $("#requestText");
+      const text = reqText ? reqText.textContent : "";
+      try {
+        await navigator.clipboard.writeText(text);
+        copy.textContent = "Đã sao chép ✓";
+      } catch {
+        if (reqText) {
+          const range = document.createRange();
+          range.selectNodeContents(reqText);
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+        copy.textContent = "Chọn & Ctrl+C để chép";
+      }
+    });
+  }
 
-  $("#backBtn").addEventListener("click", () => {
-    $("#requestResult").hidden = true;
-    requestForm.hidden = false;
-  });
+  const back = $("#backBtn");
+  if (back) {
+    back.addEventListener("click", () => {
+      const reqRes = $("#requestResult");
+      if (reqRes) reqRes.hidden = true;
+      form.hidden = false;
+    });
+  }
 }
 
 /* ---------- Lightbox ---------- */
@@ -836,24 +948,31 @@ let lightboxIndex = 0;
 let lightboxOpener = null;
 
 function openLightbox(index) {
-  const opening = lightbox.hidden;
+  const lb = $("#lightbox") || lightbox;
+  if (!lb) return;
+  const opening = lb.hidden;
   if (opening) lightboxOpener = document.activeElement;
   lightboxIndex = (index + GALLERY.length) % GALLERY.length;
   const item = GALLERY[lightboxIndex];
   const img = $("#lightboxImg");
-  img.src = imgPath(item.img);
-  img.alt = item.cap;
-  $("#lightboxCap").textContent = `${item.cap} · ${lightboxIndex + 1}/${GALLERY.length}`;
-  lightbox.hidden = false;
+  if (img) {
+    img.src = imgPath(item.img);
+    img.alt = item.cap;
+  }
+  const cap = $("#lightboxCap");
+  if (cap) cap.textContent = `${item.cap} · ${lightboxIndex + 1}/${GALLERY.length}`;
+  lb.hidden = false;
   lockScroll(true);
   if (opening) {
-    const first = focusableElements(lightbox)[0];
+    const first = focusableElements(lb)[0];
     if (first) first.focus({ preventScroll: true });
   }
 }
 
 function closeLightbox() {
-  lightbox.hidden = true;
+  const lb = $("#lightbox") || lightbox;
+  if (!lb) return;
+  lb.hidden = true;
   if (!$(".modal:not([hidden])")) lockScroll(false);
   if (lightboxOpener) lightboxOpener.focus({ preventScroll: true });
   lightboxOpener = null;
@@ -875,7 +994,8 @@ function initGlobalEvents() {
 
     const book = e.target.closest("[data-book]");
     if (book) {
-      if (book.closest("#roomModal")) closeModal(roomModal);
+      const rm = $("#roomModal") || roomModal;
+      if (rm && book.closest("#roomModal")) closeModal(rm);
       openBooking({ room: book.dataset.book });
       return;
     }
@@ -905,23 +1025,25 @@ function initGlobalEvents() {
   });
 
   document.addEventListener("keydown", (e) => {
+    const lb = $("#lightbox") || lightbox;
     const openModalEl = $(".modal:not([hidden])");
     if (e.key === "Escape") {
-      if (!lightbox.hidden) closeLightbox();
+      if (lb && !lb.hidden) closeLightbox();
       else if (openModalEl) closeModal(openModalEl);
       else if (document.body.classList.contains("nav-open")) {
         closeNav();
-        $("#burger").focus();
+        const burger = $("#burger");
+        if (burger) burger.focus();
       }
       return;
     }
 
     if (e.key === "Tab") {
-      if (!lightbox.hidden) trapFocus(e, lightbox);
+      if (lb && !lb.hidden) trapFocus(e, lb);
       else if (openModalEl) trapFocus(e, openModalEl);
     }
 
-    if (!lightbox.hidden) {
+    if (lb && !lb.hidden) {
       if (e.key === "ArrowLeft") stepLightbox(-1);
       if (e.key === "ArrowRight") stepLightbox(1);
     }
@@ -932,54 +1054,71 @@ function initGlobalEvents() {
 
 function initHeader() {
   const siteTop = $("#siteTop");
-  const onScroll = () => {
-    siteTop.classList.toggle("is-stuck", window.scrollY > 40);
-  };
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  if (siteTop) {
+    const onScroll = () => {
+      siteTop.classList.toggle("is-stuck", window.scrollY > 40);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
 
-  $("#burger").addEventListener("click", () => {
-    document.body.classList.toggle("nav-open");
-    const open = document.body.classList.contains("nav-open");
-    $("#nav").classList.toggle("is-open", open);
-    $("#burger").setAttribute("aria-expanded", String(open));
-    $("#burger").setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
-  });
+  const burger = $("#burger");
+  if (burger) {
+    burger.addEventListener("click", () => {
+      document.body.classList.toggle("nav-open");
+      const open = document.body.classList.contains("nav-open");
+      const nav = $("#nav");
+      if (nav) nav.classList.toggle("is-open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      burger.setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
+    });
+  }
 
   $$("#nav a").forEach((a) => a.addEventListener("click", closeNav));
 }
 
 function closeNav() {
   document.body.classList.remove("nav-open");
-  $("#nav").classList.remove("is-open");
-  $("#burger").setAttribute("aria-expanded", "false");
-  $("#burger").setAttribute("aria-label", "Mở menu");
+  const nav = $("#nav");
+  if (nav) nav.classList.remove("is-open");
+  const burger = $("#burger");
+  if (burger) {
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", "Mở menu");
+  }
 }
 
 /* ---------- Booking bar ---------- */
 
 function initBookBar() {
   const form = $("#bookForm");
+  if (!form) return;
   syncCheckoutMin("#ci", "#co");
   syncBookingDates("#ci", "#co", "#rCi", "#rCo");
-  $("#ci").addEventListener("change", () => {
-    syncCheckoutMin("#ci", "#co");
-    syncBookingDates("#ci", "#co", "#rCi", "#rCo");
-  });
-  $("#co").addEventListener("change", () => syncBookingDates("#ci", "#co", "#rCi", "#rCo"));
+  const ci = $("#ci");
+  if (ci) {
+    ci.addEventListener("change", () => {
+      syncCheckoutMin("#ci", "#co");
+      syncBookingDates("#ci", "#co", "#rCi", "#rCo");
+    });
+  }
+  const co = $("#co");
+  if (co) {
+    co.addEventListener("change", () => syncBookingDates("#ci", "#co", "#rCi", "#rCo"));
+  }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    $("#ci").min = todayISO();
+    if (ci) ci.min = todayISO();
     syncCheckoutMin("#ci", "#co", false);
     if (!form.reportValidity()) return;
     openBooking({
-      checkin: $("#ci").value,
-      checkout: $("#co").value,
-      adults: $("#adults").value,
-      childrenYoung: $("#childrenYoung").value,
-      childrenOlder: $("#childrenOlder").value,
-      room: $("#rtype").value || "",
+      checkin: ci ? ci.value : "",
+      checkout: co ? co.value : "",
+      adults: $("#adults") ? $("#adults").value : "2",
+      childrenYoung: $("#childrenYoung") ? $("#childrenYoung").value : "0",
+      childrenOlder: $("#childrenOlder") ? $("#childrenOlder").value : "0",
+      room: $("#rtype") ? $("#rtype").value || "" : "",
     });
   });
 }
@@ -1012,7 +1151,8 @@ function observeReveals() {
 /* ---------- Init ---------- */
 
 function init() {
-  $("#year").textContent = new Date().getFullYear();
+  const yr = $("#year");
+  if (yr) yr.textContent = new Date().getFullYear();
   initDates();
   renderRooms();
   renderPriceTable();
