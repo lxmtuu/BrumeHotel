@@ -644,21 +644,162 @@ function guestCapacityWarning(room, adults, children) {
   return `Số khách vượt sức chứa niêm yết của ${room.name} (${room.capacity}). Brume sẽ tư vấn phương án phù hợp khi xác nhận.`;
 }
 
+function renderExtraRooms() {
+  const container = $("#extraRoomsContainer");
+  const countEl = $("#rRoomCount");
+  const count = countEl && countEl.value ? Number(countEl.value) : 1;
+  const rRoomLabel = $("#rRoomLabel");
+
+  if (rRoomLabel) {
+    rRoomLabel.textContent = count > 1 && count < 5 ? "Hạng phòng (Phòng 1)" : "Hạng phòng";
+  }
+
+  if (!container) return;
+
+  if (count <= 1) {
+    container.hidden = true;
+    container.innerHTML = "";
+    return;
+  }
+
+  if (count >= 5) {
+    container.hidden = false;
+    container.innerHTML = `
+      <div class="group-booking-hint">
+        🏨 <strong>Khách đoàn từ 5 phòng trở lên:</strong> Lễ tân Brume Hotel sẽ liên hệ trực tiếp để tư vấn chính sách ưu đãi giá đoàn và bố trí các hạng phòng liền kề tối ưu nhất.
+      </div>`;
+    return;
+  }
+
+  const previousValues = {};
+  $$("select[data-extra-room]", container).forEach((sel) => {
+    previousValues[sel.dataset.extraRoom] = sel.value;
+  });
+
+  let fieldsHtml = "";
+  for (let i = 2; i <= count; i++) {
+    const prev = previousValues[i] || "same";
+    fieldsHtml += `
+      <div class="field">
+        <label for="rRoom${i}">Hạng phòng (Phòng ${i})</label>
+        <select id="rRoom${i}" name="room${i}" data-extra-room="${i}">
+          <option value="same"${prev === "same" ? " selected" : ""}>Cùng hạng với Phòng 1</option>
+          <option value=""${prev === "" ? " selected" : ""}>Chưa chọn / nhờ tư vấn</option>
+          ${ROOMS.map((r) => `<option value="${r.slug}"${prev === r.slug ? " selected" : ""}>${r.name}</option>`).join("")}
+        </select>
+      </div>`;
+  }
+
+  container.hidden = false;
+  container.innerHTML = `
+    <div class="extra-rooms">
+      <p class="extra-rooms__title">Lựa chọn các phòng tiếp theo</p>
+      <div class="extra-rooms__grid">${fieldsHtml}</div>
+    </div>`;
+
+  $$("select[data-extra-room]", container).forEach((sel) => {
+    sel.addEventListener("change", () => updateGuestWarnings());
+  });
+}
+
+function getSelectedRooms() {
+  const countEl = $("#rRoomCount");
+  const count = countEl && countEl.value ? Number(countEl.value) : 1;
+  const primaryEl = $("#rRoom");
+  const primarySlug = primaryEl ? primaryEl.value : "";
+  const primaryRoom = primarySlug ? roomBySlug(primarySlug) : null;
+
+  if (count <= 1) {
+    return [
+      {
+        index: 1,
+        slug: primarySlug,
+        room: primaryRoom,
+        label: primaryRoom ? primaryRoom.name : "Chưa chọn (nhờ Brume tư vấn)",
+      },
+    ];
+  }
+
+  if (count >= 5) {
+    return [
+      {
+        index: 1,
+        slug: primarySlug,
+        room: primaryRoom,
+        label: primaryRoom
+          ? `${primaryRoom.name} (ưu tiên cho đoàn)`
+          : "Đoàn từ 5 phòng trở lên (nhờ Brume tư vấn sắp xếp)",
+      },
+    ];
+  }
+
+  const result = [
+    {
+      index: 1,
+      slug: primarySlug,
+      room: primaryRoom,
+      label: primaryRoom ? primaryRoom.name : "Chưa chọn (nhờ Brume tư vấn)",
+    },
+  ];
+
+  for (let i = 2; i <= count; i++) {
+    const extraEl = $(`#rRoom${i}`);
+    let val = extraEl ? extraEl.value : "same";
+    if (val === "same") {
+      result.push({
+        index: i,
+        slug: primarySlug,
+        room: primaryRoom,
+        label: primaryRoom ? `${primaryRoom.name} (như Phòng 1)` : "Chưa chọn (nhờ Brume tư vấn)",
+      });
+    } else {
+      const r = val ? roomBySlug(val) : null;
+      result.push({
+        index: i,
+        slug: val,
+        room: r,
+        label: r ? r.name : "Chưa chọn (nhờ Brume tư vấn)",
+      });
+    }
+  }
+
+  return result;
+}
+
 function updateGuestWarnings() {
-  const rRoom = $("#rRoom");
-  const room = rRoom ? roomBySlug(rRoom.value) : null;
   const rYoung = $("#rChildrenYoung");
   const rOlder = $("#rChildrenOlder");
   const rAdults = $("#rAdults");
   const children = (rYoung ? Number(rYoung.value) : 0) + (rOlder ? Number(rOlder.value) : 0);
   const adults = rAdults ? Number(rAdults.value) : 2;
-  const warning = guestCapacityWarning(room, adults, children);
+
+  const countEl = $("#rRoomCount");
+  const roomCount = countEl && countEl.value ? Number(countEl.value) : 1;
+
+  let warning = "";
+  if (roomCount <= 1) {
+    const rRoom = $("#rRoom");
+    const room = rRoom ? roomBySlug(rRoom.value) : null;
+    warning = guestCapacityWarning(room, adults, children);
+  } else if (roomCount < 5) {
+    const selectedRooms = getSelectedRooms();
+    const knownRooms = selectedRooms.filter((s) => s.room);
+    if (knownRooms.length > 0) {
+      const totalAdultCap = knownRooms.reduce((sum, s) => sum + s.room.adultCapacity, 0);
+      const totalChildCap = knownRooms.reduce((sum, s) => sum + s.room.childCapacity, 0);
+      if (adults > totalAdultCap || children > totalChildCap) {
+        warning = `Số khách (${adults} người lớn${children > 0 ? `, ${children} trẻ em` : ""}) vượt tổng sức chứa niêm yết của ${knownRooms.length} phòng đã chọn (${totalAdultCap} người lớn). Brume sẽ tư vấn phương án ghép phòng phù hợp khi xác nhận.`;
+      }
+    }
+  }
+
   ["#bookGuestWarning", "#requestGuestWarning"].forEach((selector) => {
     const el = $(selector);
     if (!el) return;
     el.textContent = warning;
     el.hidden = !warning;
   });
+
   $$(".room").forEach((card) => {
     const cardRoom = roomBySlug(card.dataset.slug);
     const cardWarn = cardRoom ? guestCapacityWarning(cardRoom, adults, children) : null;
@@ -751,8 +892,16 @@ function initGuestFields() {
   if (rVehicle) {
     rVehicle.addEventListener("change", syncVehicleHint);
   }
+  const rRoomCount = $("#rRoomCount");
+  if (rRoomCount) {
+    rRoomCount.addEventListener("change", () => {
+      renderExtraRooms();
+      updateGuestWarnings();
+    });
+  }
   syncGuestCounts();
   syncVehicleHint();
+  renderExtraRooms();
 }
 
 // Ngày đặt phòng được tính theo lịch tại khách sạn, không theo múi giờ của khách.
@@ -908,8 +1057,11 @@ function openBooking(prefill = {}) {
   if (prefill.adults && $("#rAdults")) $("#rAdults").value = prefill.adults;
   if (prefill.childrenYoung !== undefined && $("#rChildrenYoung")) $("#rChildrenYoung").value = prefill.childrenYoung;
   if (prefill.childrenOlder !== undefined && $("#rChildrenOlder")) $("#rChildrenOlder").value = prefill.childrenOlder;
+  if (prefill.roomCount && $("#rRoomCount")) $("#rRoomCount").value = String(prefill.roomCount);
+  else if (prefill.room && $("#rRoomCount")) $("#rRoomCount").value = "1";
   if (Object.prototype.hasOwnProperty.call(prefill, "room") && $("#rRoom")) $("#rRoom").value = prefill.room;
   if (prefill.vehicle && $("#rVehicle")) $("#rVehicle").value = prefill.vehicle;
+  renderExtraRooms();
   syncRoomChoice(true);
   syncGuestCounts(true);
   syncVehicleHint();
@@ -983,9 +1135,26 @@ function buildMessage() {
   const note = noteEl ? noteEl.value.trim() : "";
 
   const nights = ci && co ? Math.round((new Date(co) - new Date(ci)) / 86400000) : 0;
+  const countEl = $("#rRoomCount");
+  const roomCount = countEl && countEl.value ? Number(countEl.value) : 1;
+  const selectedRooms = getSelectedRooms();
+
+  let roomLine = "";
+  if (roomCount > 1) {
+    if (roomCount >= 5) {
+      const primary = selectedRooms[0];
+      roomLine = `• Số lượng phòng: Từ 5 phòng trở lên (Khách đoàn)\n• Hạng phòng mong muốn: ${primary.room ? `Ưu tiên ${primary.room.name} (nhờ Brume tư vấn thêm)` : "Khách đoàn (nhờ Brume tư vấn bố trí phòng)"}`;
+    } else {
+      const details = selectedRooms.map((s) => `Phòng ${s.index}: ${s.label}`).join(" | ");
+      roomLine = `• Số lượng phòng: ${roomCount} phòng\n• Hạng phòng: ${details}`;
+    }
+  } else {
+    roomLine = `• Hạng phòng: ${room ? room.name : "nhờ Brume tư vấn"}`;
+  }
+
   const lines = [
     "Xin chào Brume Hotel, mình muốn đặt phòng:",
-    `• Hạng phòng: ${room ? room.name : "nhờ Brume tư vấn"}`,
+    roomLine,
     `• Nhận phòng: ${fmtDate(ci)}`,
     `• Trả phòng: ${fmtDate(co)}${nights > 0 ? ` (${nights} đêm)` : ""}`,
     `• Người lớn (từ 12 tuổi): ${adults}`,
@@ -1075,6 +1244,22 @@ function getBookingPayload() {
   };
 
   const nights = ci && co ? Math.round((new Date(co) - new Date(ci)) / 86400000) : 0;
+  const countEl = $("#rRoomCount");
+  const roomCount = countEl && countEl.value ? Number(countEl.value) : 1;
+  const selectedRooms = getSelectedRooms();
+
+  let roomSummary = "";
+  if (roomCount > 1) {
+    if (roomCount >= 5) {
+      const primary = selectedRooms[0];
+      roomSummary = `Đoàn ${roomCount}+ phòng (${primary.room ? `ưu tiên ${primary.room.name}` : "nhờ Brume tư vấn"})`;
+    } else {
+      roomSummary = `${roomCount} phòng (${selectedRooms.map((s) => `P${s.index}: ${s.label}`).join(", ")})`;
+    }
+  } else {
+    roomSummary = room ? room.name : "Chưa chọn (nhờ Brume tư vấn)";
+  }
+
   const agesYoung = childAges.filter((s) => s.dataset.childGroup === "young")
     .map((s) => s.value === "0" ? "dưới 1 tuổi" : `${s.value} tuổi`);
   const agesOlder = childAges.filter((s) => s.dataset.childGroup === "older")
@@ -1086,7 +1271,8 @@ function getBookingPayload() {
     checkin: fmtDate(ci),
     checkout: fmtDate(co),
     nights,
-    room: room ? room.name : "Chưa chọn (nhờ Brume tư vấn)",
+    roomCount,
+    room: roomSummary,
     adults: Number(adults) || 2,
     childrenYoung: Number(childrenYoung) || 0,
     childrenOlder: Number(childrenOlder) || 0,

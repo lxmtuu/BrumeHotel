@@ -426,9 +426,20 @@
             </div>
             <div class="child-ages field--full" id="childAges" hidden></div>
             <div class="field">
-              <label for="rRoom">Hạng phòng</label>
+              <label for="rRoomCount">Số lượng phòng</label>
+              <select id="rRoomCount" name="roomCount">
+                <option value="1" selected>1 phòng (tiêu chuẩn)</option>
+                <option value="2">2 phòng</option>
+                <option value="3">3 phòng</option>
+                <option value="4">4 phòng</option>
+                <option value="5">Từ 5 phòng trở lên (Khách đoàn)</option>
+              </select>
+            </div>
+            <div class="field" id="roomField1">
+              <label for="rRoom" id="rRoomLabel">Hạng phòng</label>
               <select id="rRoom" name="room"></select>
             </div>
+            <div class="field--full" id="extraRoomsContainer" hidden></div>
             <div class="field">
               <label for="rVehicle">Phương tiện di chuyển</label>
               <select id="rVehicle" name="vehicle">
