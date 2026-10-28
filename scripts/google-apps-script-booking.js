@@ -3,21 +3,13 @@
  * GOOGLE APPS SCRIPT: TỰ ĐỘNG GỬI EMAIL ĐẶT PHÒNG & LƯU GOOGLE SHEETS
  * Khách sạn: Brume Hotel Đà Lạt (44 Hồ Tùng Mậu)
  * ===================================================================
- * 
- * Hướng dẫn 3 bước cài đặt (hoàn toàn miễn phí):
- * 1. Mở https://sheets.google.com -> Tạo 1 file Google Sheets mới (đặt tên: "Brume Hotel - Quản lý đặt phòng").
- * 2. Trên thanh menu, bấm "Tiện ích mở rộng" (Extensions) -> "Apps Script".
- * 3. Xoá hết mã cũ, dán toàn bộ đoạn mã này vào.
- *    - Thay EMAIL_LE_TAN bên dưới thành địa chỉ email của Lễ tân / Khách sạn.
- *    - Bấm "Triển khai" (Deploy) -> "Tùy chọn triển khai mới" (New deployment).
- *    - Loại: "Ứng dụng web" (Web app).
- *    - Người có quyền truy cập (Who has access): Chọn "Bất kỳ ai" (Anyone).
- *    - Bấm "Triển khai" và sao chép URL Ứng dụng web (Web App URL).
- * 4. Dán URL này vào mục `bookingEndpoint` trong file `assets/js/app.js` của website!
  */
 
 // CẤU HÌNH ĐỊA CHỈ EMAIL NHẬN THÔNG BÁO (có thể điền 1 hoặc nhiều email cách nhau bởi dấu phẩy)
 const EMAIL_LE_TAN = "octieuwayway@gmail.com"; // Email Lễ tân nhận thông báo đặt phòng
+
+// ID FILE GOOGLE SHEETS (Dùng ID này để script hoạt động tốt dù tạo độc lập hay tạo từ Sheets)
+const SPREADSHEET_ID = "106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU";
 
 function doPost(e) {
   try {
@@ -32,55 +24,75 @@ function doPost(e) {
       data = e.parameter || {};
     }
 
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Nếu bảng tính chưa có tiêu đề cột thì tự động tạo hàng tiêu đề
-    if (sheet.getLastRow() === 0) {
-      const headers = [
-        "Thời gian gửi",
-        "Họ và tên",
-        "Số điện thoại",
-        "Check-in",
-        "Check-out",
-        "Số đêm",
-        "Hạng phòng",
-        "Người lớn",
-        "Trẻ em <6t",
-        "Trẻ em 6-11t",
-        "Tuổi trẻ em",
-        "Phương tiện & Gửi xe",
-        "Ghi chú",
-        "Trạng thái xử lý"
-      ];
-      sheet.appendRow(headers);
-      sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#16231e").setFontColor("#ffffff");
-      sheet.setFrozenRows(1);
-    }
-
     // Thời gian định dạng Việt Nam
     const nowStr = Utilities.formatDate(new Date(), "Asia/Ho_Chi_Minh", "dd/MM/yyyy HH:mm:ss");
 
-    // Ghi dòng mới vào Google Sheets
-    sheet.appendRow([
-      nowStr,
-      data.name || "—",
-      "'" + (data.phone || "—"), // dấu ' để giữ nguyên số 0 ở đầu
-      data.checkin || "—",
-      data.checkout || "—",
-      data.nights ? data.nights + " đêm" : "—",
-      data.room || "Chưa chọn (nhờ tư vấn)",
-      data.adults || 2,
-      data.childrenYoung || 0,
-      data.childrenOlder || 0,
-      data.childAges || "—",
-      data.vehicle || "Không có",
-      data.note || "—",
-      "Chưa liên hệ"
-    ]);
-
-    // GỬI EMAIL HTML THÔNG BÁO CHO LỄ TÂN
+    // 1. GỬI EMAIL HTML THÔNG BÁO CHO LỄ TÂN (Ưu tiên gửi trước để không bị nghẽn)
     if (EMAIL_LE_TAN) {
-      sendBookingEmail(data, nowStr);
+      try {
+        sendBookingEmail(data, nowStr);
+      } catch (mailErr) {
+        console.error("Lỗi gửi email: " + mailErr);
+      }
+    }
+
+    // 2. LƯU DÒNG DỮ LIỆU MỚI VÀO GOOGLE SHEETS
+    try {
+      let sheet = null;
+      if (SPREADSHEET_ID) {
+        try {
+          const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+          sheet = ss.getSheetByName("Danh Sách Đặt Phòng") || ss.getSheets()[0];
+        } catch (err) {}
+      }
+      if (!sheet && SpreadsheetApp.getActiveSpreadsheet()) {
+        sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      }
+
+      if (sheet) {
+        // Nếu bảng tính chưa có tiêu đề cột thì tự động tạo hàng tiêu đề
+        if (sheet.getLastRow() === 0) {
+          const headers = [
+            "Thời gian gửi",
+            "Họ và tên",
+            "Số điện thoại",
+            "Check-in",
+            "Check-out",
+            "Số đêm",
+            "Hạng phòng",
+            "Người lớn",
+            "Trẻ em <6t",
+            "Trẻ em 6-11t",
+            "Tuổi trẻ em",
+            "Phương tiện & Gửi xe",
+            "Ghi chú",
+            "Trạng thái xử lý"
+          ];
+          sheet.appendRow(headers);
+          sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#16231e").setFontColor("#ffffff");
+          sheet.setFrozenRows(1);
+        }
+
+        // Ghi dòng mới vào Google Sheets
+        sheet.appendRow([
+          nowStr,
+          data.name || "—",
+          "'" + (data.phone || "—"), // dấu ' để giữ nguyên số 0 ở đầu
+          data.checkin || "—",
+          data.checkout || "—",
+          data.nights ? data.nights + " đêm" : "—",
+          data.room || "Chưa chọn (nhờ tư vấn)",
+          data.adults || 2,
+          data.childrenYoung || 0,
+          data.childrenOlder || 0,
+          data.childAges || "—",
+          data.vehicle || "Không có",
+          data.note || "—",
+          "Chưa liên hệ"
+        ]);
+      }
+    } catch (sheetErr) {
+      console.error("Lỗi ghi bảng tính: " + sheetErr);
     }
 
     return ContentService
