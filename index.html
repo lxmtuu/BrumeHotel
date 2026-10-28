@@ -9,7 +9,7 @@
       content="Brume Hotel tại 44 Hồ Tùng Mậu, phường Xuân Hương, Đà Lạt. 10 hạng phòng từ Double đến Family, có cửa sổ, ban công hướng vườn, bồn tắm. Giá niêm yết theo mùa thấp điểm, cao điểm, lễ Tết."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Brume Hotel Đà Lạt — Ở chậm giữa sương Đà Lạt" />
+    <meta property="og:title" content="Brume Hotel Đà Lạt — Phòng nghỉ tại trung tâm Đà Lạt" />
     <meta
       property="og:description"
       content="10 hạng phòng giữa phường Xuân Hương: cửa sổ, ban công hướng vườn, bồn tắm và phòng gia đình cho tới 6 khách."
@@ -20,14 +20,9 @@
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2316231e'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-size='38' fill='%23c99a5e' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="stylesheet" href="assets/css/fonts.css" />
     <link rel="preload" as="image" href="assets/img/hero.jpg" />
-    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css?v=20261028-gallery" />
   </head>
   <body>
     <a class="skip-link" href="#main">Bỏ qua điều hướng</a>
@@ -128,15 +123,17 @@
         </div>
         <div class="hero__veil"></div>
         <div class="wrap hero__content">
-          <p class="eyebrow eyebrow--light">Đà Lạt · Phường Xuân Hương</p>
-          <h1 class="hero__title">Ở chậm giữa<br /><em>sương Đà Lạt</em></h1>
-          <p class="hero__lead">
-            Mười hạng phòng tại 44 Hồ Tùng Mậu — cửa sổ, ban công hướng vườn, bồn tắm và phòng gia đình cho tới
-            6 khách.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--solid" href="#rooms">Xem phòng &amp; giá</a>
-            <a class="btn btn--outline" href="#location">Đường đi &amp; vị trí</a>
+          <div class="hero__copy">
+            <p class="eyebrow eyebrow--light hero__eyebrow">Chào mừng đến Brume</p>
+            <h1 class="hero__title">Brume Hotel <span>Đà Lạt</span></h1>
+            <p class="hero__lead">
+              Mười hạng phòng với cửa sổ, ban công, bồn tắm và không gian dành cho gia đình.
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--solid" href="#rooms">Khám phá phòng <span aria-hidden="true">↗</span></a>
+              <a class="btn btn--outline" href="#location">Đường đi &amp; vị trí</a>
+            </div>
+            <p class="hero__address">44 Hồ Tùng Mậu <span aria-hidden="true">·</span> Phường Xuân Hương</p>
           </div>
         </div>
         <div class="hero__scroll" aria-hidden="true">
@@ -158,14 +155,38 @@
               <input type="date" id="co" name="checkout" required />
             </div>
             <div class="field">
-              <label for="guests">Số khách</label>
-              <select id="guests" name="guests">
-                <option>1 khách</option>
-                <option selected>2 khách</option>
-                <option>3 khách</option>
-                <option>4 khách</option>
-                <option>5 khách</option>
-                <option>6 khách</option>
+              <label for="adults">Người lớn (từ 12 tuổi)</label>
+              <select id="adults" name="adults">
+                <option value="1">1 người lớn</option>
+                <option value="2" selected>2 người lớn</option>
+                <option value="3">3 người lớn</option>
+                <option value="4">4 người lớn</option>
+                <option value="5">5 người lớn</option>
+                <option value="6">6 người lớn</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="childrenYoung">Trẻ dưới 6 tuổi</label>
+              <select id="childrenYoung" name="childrenUnderSix">
+                <option value="0" selected>Không có trẻ</option>
+                <option value="1">1 trẻ em</option>
+                <option value="2">2 trẻ em</option>
+                <option value="3">3 trẻ em</option>
+                <option value="4">4 trẻ em</option>
+                <option value="5">5 trẻ em</option>
+                <option value="6">6 trẻ em</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="childrenOlder">Trẻ từ 6 đến dưới 12 tuổi</label>
+              <select id="childrenOlder" name="childrenSixToEleven">
+                <option value="0" selected>Không có trẻ</option>
+                <option value="1">1 trẻ em</option>
+                <option value="2">2 trẻ em</option>
+                <option value="3">3 trẻ em</option>
+                <option value="4">4 trẻ em</option>
+                <option value="5">5 trẻ em</option>
+                <option value="6">6 trẻ em</option>
               </select>
             </div>
             <div class="field">
@@ -179,6 +200,8 @@
               </svg>
             </button>
             <p class="book__note">Brume xác nhận tình trạng phòng qua Zalo hoặc điện thoại.</p>
+            <p class="guest-warning book__guest-warning" id="bookGuestWarning" aria-live="polite" hidden></p>
+            <p class="book__season" id="bookSeason" aria-live="polite"></p>
           </form>
         </div>
       </section>
@@ -243,12 +266,14 @@
               <h2 class="h2">Mười hạng phòng,<br />một mức giá rõ ràng.</h2>
             </div>
             <div class="season" role="group" aria-label="Chọn mùa giá">
-              <button type="button" class="season__btn is-active" data-season="low">Thấp điểm</button>
-              <button type="button" class="season__btn" data-season="high">Cao điểm</button>
-              <button type="button" class="season__btn" data-season="peak">Lễ &amp; Tết</button>
+              <button type="button" class="season__btn is-active" data-season="low" aria-pressed="true">Thấp điểm</button>
+              <button type="button" class="season__btn" data-season="high" aria-pressed="false">Cao điểm</button>
+              <button type="button" class="season__btn" data-season="peak" aria-pressed="false">Lễ &amp; Tết</button>
             </div>
           </div>
 
+          <p class="season-guide">Thấp điểm và cao điểm là mùa giá theo tháng. Trong mỗi mùa: <strong>ngày thường là Chủ nhật–thứ Năm (CN–T5)</strong>, <strong>cuối tuần là thứ Sáu–thứ Bảy (T6–T7)</strong>. Lễ và Tết có giá riêng.</p>
+          <p class="season-status" id="seasonStatus" aria-live="polite"></p>
           <div class="filters" id="filters" role="group" aria-label="Lọc hạng phòng">
             <button type="button" class="chip is-active" data-filter="all">Tất cả</button>
             <button type="button" class="chip" data-filter="double">Phòng đôi</button>
@@ -259,6 +284,104 @@
           </div>
 
           <div class="room-grid" id="roomGrid"></div>
+          <!-- Generated fallback: run node scripts/update-fallback.js after editing room data. -->
+          <!-- fallback-rooms:start -->
+          <div class="fallback-content">
+            <p>Để đặt phòng, vui lòng <a href="tel:0778888525">gọi 077 888 8525</a> hoặc <a href="https://zalo.me/0778888525">nhắn Zalo</a>.</p>
+            <div class="room-grid">
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/double-2.jpg" alt="Double Room" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Double Room</h3>
+                  <p class="room__rooms">Phòng G07, 109</p>
+                  <p class="room__desc">Phòng 2 khách có cửa sổ nhỏ thoáng mát.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>18 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/superior-1.jpg" alt="Superior Double" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Superior Double</h3>
+                  <p class="room__rooms">Phòng G02, G04, G06, 104, 106, 108</p>
+                  <p class="room__desc">Phòng 2 khách không cửa sổ.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>20 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/deluxe-window-2.jpg" alt="Deluxe Double with Window" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Deluxe Double with Window</h3>
+                  <p class="room__rooms">Phòng G08, 110</p>
+                  <p class="room__desc">Phòng 2 khách có cửa sổ lớn thoáng mát.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>20 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/bathtub-1.jpg" alt="Deluxe Double with Bathtub" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Deluxe Double with Bathtub</h3>
+                  <p class="room__rooms">Phòng 202, 204</p>
+                  <p class="room__desc">Phòng 2 khách có cửa sổ thoáng mát, bồn tắm.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>25 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/balcony-2.jpg" alt="Deluxe Double with Balcony" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Deluxe Double with Balcony</h3>
+                  <p class="room__rooms">Phòng 101</p>
+                  <p class="room__desc">Phòng 2 khách có ban công hướng đường phố và bồn tắm.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>25 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/garden-suite-2.jpg" alt="Deluxe Suite – Garden View" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Deluxe Suite – Garden View</h3>
+                  <p class="room__rooms">Phòng 206</p>
+                  <p class="room__desc">Phòng 2 khách có ban công hướng vườn, bồn tắm.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>50 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/suite-balcony-1.jpg" alt="Deluxe Suite with Balcony" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Deluxe Suite with Balcony</h3>
+                  <p class="room__rooms">Phòng 201</p>
+                  <p class="room__desc">Phòng hạng sang có ban công hướng đường phố.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>50 m²</dd></div><div><dt>Giường</dt><dd>1 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>2 người lớn + 1 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/family-window-1.jpg" alt="Family Room with Window" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Family Room with Window</h3>
+                  <p class="room__rooms">Phòng 103, 105, 107, G05, G01, G03</p>
+                  <p class="room__desc">Phòng gia đình có cửa sổ thoáng mát.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>28 m²</dd></div><div><dt>Giường</dt><dd>2 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>4 người lớn + 2 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/family-garden-3.jpg" alt="Family Room – Garden View" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Family Room – Garden View</h3>
+                  <p class="room__rooms">Phòng 203, 205</p>
+                  <p class="room__desc">Phòng gia đình có ban công rộng hướng vườn.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>30 m²</dd></div><div><dt>Giường</dt><dd>2 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>4 người lớn + 2 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+              <article class="room">
+                <div class="room__media"><img src="assets/img/rooms/family-balcony-2.jpg" alt="Family Room with Balcony" loading="lazy" /></div>
+                <div class="room__body">
+                  <h3 class="room__name">Family Room with Balcony</h3>
+                  <p class="room__rooms">Phòng 102</p>
+                  <p class="room__desc">Phòng gia đình có ban công, hướng đường phố.</p>
+                  <dl class="room__meta"><div><dt>Diện tích</dt><dd>30 m²</dd></div><div><dt>Giường</dt><dd>2 giường đôi 1m8</dd></div><div><dt>Sức chứa</dt><dd>4 người lớn + 2 trẻ em dưới 12 tuổi</dd></div></dl>
+                </div>
+              </article>
+            </div>
+          </div>
+          <!-- fallback-rooms:end -->
           <p class="rooms__empty" id="roomsEmpty" hidden>Chưa có hạng phòng phù hợp. Thử bỏ bộ lọc nhé.</p>
         </div>
       </section>
@@ -269,11 +392,12 @@
           <div class="section__head">
             <div>
               <p class="section__index"><span>03</span> Bảng giá</p>
-              <h2 class="h2">Giá theo mùa,<br />không phí ẩn.</h2>
+              <h2 class="h2">Giá theo mùa,<br />thông tin rõ ràng.</h2>
             </div>
             <p class="section__note">
-              Đơn vị: VND/đêm. Giá áp dụng cho phòng 2 khách (phòng gia đình: 4 khách). Vui lòng xác nhận lại
-              với Brume khi đặt.
+              Đơn vị: VND/đêm. Giá áp dụng cho phòng 2 người lớn (phòng gia đình: 4 người lớn).
+              Trong mỗi mùa giá, ngày thường là CN–T5 và cuối tuần là T6–T7; Lễ và Tết áp dụng giá riêng.
+              Chính sách trẻ em được ghi bên dưới; vui lòng xác nhận lại với Brume khi đặt.
             </p>
           </div>
           <div class="table-wrap">
@@ -282,8 +406,92 @@
                 Bảng giá 10 hạng phòng theo ba mùa
               </caption>
             </table>
+            <!-- fallback-prices:start -->
+            <table class="price-table fallback-content"><caption class="visually-hidden">Bảng giá 10 hạng phòng theo mùa</caption>
+    <thead>
+      <tr>
+        <th rowspan="2" scope="col">Hạng phòng</th>
+        <th rowspan="2" scope="col">Số phòng</th>
+        <th colspan="2" scope="colgroup" class="col-sep">Thấp điểm</th>
+        <th colspan="2" scope="colgroup" class="col-sep">Cao điểm</th>
+        <th colspan="2" scope="colgroup" class="col-sep">Lễ &amp; Tết</th>
+      </tr>
+      <tr>
+        <th class="col-sep" scope="col">Ngày thường<span>CN–T5</span></th><th scope="col">Cuối tuần<span>T6–T7</span></th>
+        <th class="col-sep" scope="col">Ngày thường<span>CN–T5</span></th><th scope="col">Cuối tuần<span>T6–T7</span></th>
+        <th class="col-sep">Lễ</th><th>Tết</th>
+      </tr>
+    </thead><tbody>
+      <tr>
+        <th scope="row">Double Room<span class="room-code">G07, 109</span></th>
+        <td>2 phòng</td>
+        <td class="col-sep">400.000₫</td><td class="">500.000₫</td><td class="col-sep">650.000₫</td><td class="">750.000₫</td><td class="col-sep">850.000₫</td><td class="">1.200.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Superior Double<span class="room-code">G02, G04, G06, 104, 106, 108</span></th>
+        <td>6 phòng</td>
+        <td class="col-sep">450.000₫</td><td class="">550.000₫</td><td class="col-sep">700.000₫</td><td class="">800.000₫</td><td class="col-sep">900.000₫</td><td class="">1.350.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Deluxe Double with Window<span class="room-code">G08, 110</span></th>
+        <td>2 phòng</td>
+        <td class="col-sep">500.000₫</td><td class="">600.000₫</td><td class="col-sep">900.000₫</td><td class="">1.000.000₫</td><td class="col-sep">1.250.000₫</td><td class="">1.900.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Deluxe Double with Bathtub<span class="room-code">202, 204</span></th>
+        <td>2 phòng</td>
+        <td class="col-sep">600.000₫</td><td class="">700.000₫</td><td class="col-sep">1.100.000₫</td><td class="">1.250.000₫</td><td class="col-sep">1.600.000₫</td><td class="">2.400.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Deluxe Double with Balcony<span class="room-code">101</span></th>
+        <td>1 phòng</td>
+        <td class="col-sep">700.000₫</td><td class="">800.000₫</td><td class="col-sep">1.150.000₫</td><td class="">1.300.000₫</td><td class="col-sep">1.650.000₫</td><td class="">2.600.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Deluxe Suite – Garden View<span class="room-code">206</span></th>
+        <td>1 phòng</td>
+        <td class="col-sep">750.000₫</td><td class="">850.000₫</td><td class="col-sep">1.200.000₫</td><td class="">1.400.000₫</td><td class="col-sep">1.750.000₫</td><td class="">2.700.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Deluxe Suite with Balcony<span class="room-code">201</span></th>
+        <td>1 phòng</td>
+        <td class="col-sep">750.000₫</td><td class="">850.000₫</td><td class="col-sep">1.250.000₫</td><td class="">1.450.000₫</td><td class="col-sep">1.800.000₫</td><td class="">2.800.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Family Room with Window<span class="room-code">103, 105, 107, G05, G01, G03</span></th>
+        <td>6 phòng</td>
+        <td class="col-sep">800.000₫</td><td class="">900.000₫</td><td class="col-sep">1.300.000₫</td><td class="">1.500.000₫</td><td class="col-sep">1.900.000₫</td><td class="">3.200.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Family Room – Garden View<span class="room-code">203, 205</span></th>
+        <td>2 phòng</td>
+        <td class="col-sep">850.000₫</td><td class="">950.000₫</td><td class="col-sep">1.400.000₫</td><td class="">1.600.000₫</td><td class="col-sep">2.000.000₫</td><td class="">3.400.000₫</td>
+      </tr>
+      <tr>
+        <th scope="row">Family Room with Balcony<span class="room-code">102</span></th>
+        <td>1 phòng</td>
+        <td class="col-sep">900.000₫</td><td class="">1.000.000₫</td><td class="col-sep">1.500.000₫</td><td class="">1.700.000₫</td><td class="col-sep">2.100.000₫</td><td class="">3.600.000₫</td>
+      </tr></tbody></table>
+            <!-- fallback-prices:end -->
           </div>
           <p class="table-hint">Vuốt ngang bảng để xem đủ ba mùa →</p>
+          <div class="stay-info" id="stay-info" aria-label="Thông tin mùa và lưu trú">
+            <div>
+              <h3>Mùa giá</h3>
+              <p><strong>Cao điểm:</strong> Tháng 1, 6, 7, 8 và 12.</p>
+              <p><strong>Thấp điểm:</strong> Tháng 2, 3, 4, 5, 9, 10 và 11.</p>
+              <div id="holidayCalendarSummary"></div>
+              <!-- fallback-holidays:start -->
+              <div class="fallback-content"><p><strong>Lễ:</strong> 29/08/2026–01/09/2026, 01/01/2027, 11/02/2027–15/02/2027.</p><p><strong>Tết:</strong> 07/02/2027–10/02/2027.</p><p>Đây là các mốc Brume đã cung cấp, chưa phải lịch đầy đủ. Các ngày khác vui lòng xác nhận với Brume.</p></div>
+              <!-- fallback-holidays:end -->
+            </div>
+            <div>
+              <h3>Thông tin lưu trú</h3>
+              <p><strong>Nhận phòng:</strong> 14:00 · <strong>Trả phòng:</strong> 12:00.</p>
+              <p>Trẻ dưới 6 tuổi không phụ thu; trẻ trên 6 tuổi có phụ thu. Trẻ đúng 6 tuổi, vui lòng liên hệ Brume để xác nhận.</p>
+              <p>Trẻ từ 12 tuổi được tính là người lớn. Vui lòng liên hệ Brume để xác nhận thông tin lưu trú.</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -300,6 +508,19 @@
             </p>
           </div>
           <div class="gallery__grid" id="galleryGrid"></div>
+          <!-- fallback-gallery:start -->
+          <div class="gallery__grid fallback-content">
+            <a class="gallery__item" href="assets/img/rooms/suite-balcony-1.jpg" aria-label="Xem ảnh: Deluxe Suite with Balcony (201)"><img src="assets/img/rooms/suite-balcony-1.jpg" alt="Deluxe Suite with Balcony (201)" loading="lazy" /><span>Deluxe Suite with Balcony (201)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/superior-3.jpg" aria-label="Xem ảnh: Superior Double (G02, G04, G06…)"><img src="assets/img/rooms/superior-3.jpg" alt="Superior Double (G02, G04, G06…)" loading="lazy" /><span>Superior Double (G02, G04, G06…)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/family-garden-2.jpg" aria-label="Xem ảnh: Bồn tắm bên cửa sổ nhìn vườn thông"><img src="assets/img/rooms/family-garden-2.jpg" alt="Bồn tắm bên cửa sổ nhìn vườn thông" loading="lazy" /><span>Bồn tắm bên cửa sổ nhìn vườn thông</span></a>
+            <a class="gallery__item" href="assets/img/rooms/family-garden-3.jpg" aria-label="Xem ảnh: Family Room – Garden View (203, 205)"><img src="assets/img/rooms/family-garden-3.jpg" alt="Family Room – Garden View (203, 205)" loading="lazy" /><span>Family Room – Garden View (203, 205)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/bathtub-2.jpg" aria-label="Xem ảnh: Deluxe Double with Bathtub (202, 204)"><img src="assets/img/rooms/bathtub-2.jpg" alt="Deluxe Double with Bathtub (202, 204)" loading="lazy" /><span>Deluxe Double with Bathtub (202, 204)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/family-window-1.jpg" aria-label="Xem ảnh: Family Room with Window (103, 105…)"><img src="assets/img/rooms/family-window-1.jpg" alt="Family Room with Window (103, 105…)" loading="lazy" /><span>Family Room with Window (103, 105…)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/deluxe-window-2.jpg" aria-label="Xem ảnh: Deluxe Double with Window (G08, 110)"><img src="assets/img/rooms/deluxe-window-2.jpg" alt="Deluxe Double with Window (G08, 110)" loading="lazy" /><span>Deluxe Double with Window (G08, 110)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/garden-suite-1.jpg" aria-label="Xem ảnh: Deluxe Suite – Garden View (206)"><img src="assets/img/rooms/garden-suite-1.jpg" alt="Deluxe Suite – Garden View (206)" loading="lazy" /><span>Deluxe Suite – Garden View (206)</span></a>
+            <a class="gallery__item" href="assets/img/rooms/double-2.jpg" aria-label="Xem ảnh: Double Room (G07, 109)"><img src="assets/img/rooms/double-2.jpg" alt="Double Room (G07, 109)" loading="lazy" /><span>Double Room (G07, 109)</span></a>
+          </div>
+          <!-- fallback-gallery:end -->
         </div>
       </section>
 
@@ -333,7 +554,7 @@
                 <path d="M11 25v2M21 25v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
               </svg>
               <h3>Bồn tắm</h3>
-              <p>Có ở Deluxe Double with Bathtub (202, 204) và Deluxe Suite – Garden View (206).</p>
+              <p>Có ở Deluxe Double with Bathtub (202, 204), Deluxe Double with Balcony (101) và Deluxe Suite – Garden View (206).</p>
             </li>
             <li class="feature reveal">
               <svg viewBox="0 0 32 32" aria-hidden="true">
@@ -360,7 +581,7 @@
                 />
               </svg>
               <h3>Phòng gia đình</h3>
-              <p>Hai giường đôi 1m8, đủ cho 4 người lớn và 2 trẻ em dưới 6 tuổi.</p>
+              <p>Hai giường đôi 1m8, đủ cho 4 người lớn và 2 trẻ em dưới 12 tuổi. Chính sách phụ thu trẻ em được ghi tại bảng giá.</p>
             </li>
           </ul>
         </div>
@@ -493,7 +714,7 @@
             Điền nhanh vài thông tin, Brume sẽ phản hồi qua Zalo hoặc điện thoại. Trang này không tự gửi đi —
             bạn sao chép nội dung rồi dán vào Zalo, hoặc gọi trực tiếp.
           </p>
-          <form id="requestForm" class="request-form">
+          <form id="requestForm" class="request-form" novalidate>
             <div class="field">
               <label for="rName">Tên của bạn</label>
               <input id="rName" name="name" type="text" autocomplete="name" placeholder="VD: Nguyễn An" required />
@@ -518,21 +739,48 @@
               <label for="rCo">Trả phòng</label>
               <input id="rCo" name="checkout" type="date" required />
             </div>
+            <p class="request-season field--full" id="requestSeason" aria-live="polite"></p>
             <div class="field">
-              <label for="rGuests">Số khách</label>
-              <select id="rGuests" name="guests">
-                <option>1 khách</option>
-                <option selected>2 khách</option>
-                <option>3 khách</option>
-                <option>4 khách</option>
-                <option>5 khách</option>
-                <option>6 khách</option>
+              <label for="rAdults">Người lớn (từ 12 tuổi)</label>
+              <select id="rAdults" name="adults">
+                <option value="1">1 người lớn</option>
+                <option value="2" selected>2 người lớn</option>
+                <option value="3">3 người lớn</option>
+                <option value="4">4 người lớn</option>
+                <option value="5">5 người lớn</option>
+                <option value="6">6 người lớn</option>
               </select>
             </div>
+            <div class="field">
+              <label for="rChildrenYoung">Trẻ dưới 6 tuổi</label>
+              <select id="rChildrenYoung" name="childrenUnderSix">
+                <option value="0" selected>Không có trẻ</option>
+                <option value="1">1 trẻ em</option>
+                <option value="2">2 trẻ em</option>
+                <option value="3">3 trẻ em</option>
+                <option value="4">4 trẻ em</option>
+                <option value="5">5 trẻ em</option>
+                <option value="6">6 trẻ em</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="rChildrenOlder">Trẻ từ 6 đến dưới 12 tuổi</label>
+              <select id="rChildrenOlder" name="childrenSixToEleven">
+                <option value="0" selected>Không có trẻ</option>
+                <option value="1">1 trẻ em</option>
+                <option value="2">2 trẻ em</option>
+                <option value="3">3 trẻ em</option>
+                <option value="4">4 trẻ em</option>
+                <option value="5">5 trẻ em</option>
+                <option value="6">6 trẻ em</option>
+              </select>
+            </div>
+            <div class="child-ages field--full" id="childAges" hidden></div>
             <div class="field">
               <label for="rRoom">Hạng phòng</label>
               <select id="rRoom" name="room"></select>
             </div>
+            <p class="guest-warning field--full" id="requestGuestWarning" aria-live="polite" hidden></p>
             <div class="field field--full">
               <label for="rNote">Ghi chú</label>
               <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>
@@ -559,7 +807,7 @@
     </div>
 
     <!-- LIGHTBOX -->
-    <div class="lightbox" id="lightbox" hidden>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Thư viện ảnh" hidden>
       <button class="lightbox__close" type="button" aria-label="Đóng" data-close>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" />
@@ -572,7 +820,7 @@
       </button>
       <figure class="lightbox__figure">
         <img id="lightboxImg" src="" alt="" />
-        <figcaption id="lightboxCap"></figcaption>
+        <figcaption id="lightboxCap" aria-live="polite"></figcaption>
       </figure>
       <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Ảnh sau" data-next>
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -581,6 +829,7 @@
       </button>
     </div>
 
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/holiday-calendar.js"></script>
+    <script src="assets/js/app.js?v=20261028-gallery"></script>
   </body>
 </html>
