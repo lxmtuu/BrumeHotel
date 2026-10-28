@@ -977,6 +977,7 @@ function updateSeasonFromDates(checkin, checkout) {
     const message = "Chọn ngày nhận phòng hợp lệ để tự động xem mùa giá.";
     ["#bookSeason", "#requestSeason", "#seasonStatus"].forEach((selector) => {
       const el = $(selector);
+      if (!el) return;
       el.textContent = message;
       el.classList.remove("is-unconfirmed");
     });
@@ -998,12 +999,15 @@ function updateSeasonFromDates(checkin, checkout) {
   const message = `Ngày nhận ${fmtDate(checkin)}: ${rateLabel}. ${detail} ${warning}`;
   ["#bookSeason", "#requestSeason"].forEach((selector) => {
     const el = $(selector);
+    if (!el) return;
     el.textContent = message;
     el.classList.toggle("is-unconfirmed", needsConfirmation);
   });
   const status = $("#seasonStatus");
-  status.textContent = `Tự chọn theo ngày nhận phòng: ${rateLabel}. ${detail} ${warning}`;
-  status.classList.toggle("is-unconfirmed", needsConfirmation);
+  if (status) {
+    status.textContent = `Tự chọn theo ngày nhận phòng: ${rateLabel}. ${detail} ${warning}`;
+    status.classList.toggle("is-unconfirmed", needsConfirmation);
+  }
   selectSeason(period.season, period.kind, dayOfWeek, period.season !== "peak");
 }
 
@@ -1042,7 +1046,124 @@ function initDates() {
   });
 }
 
+function ensureBookModal() {
+  if ($("#bookModal") || bookModal) return;
+  if (!document.body || typeof document.body.insertAdjacentHTML !== "function") return;
+  const adultOptions = [1, 2, 3, 4, 5, 6]
+    .map((n) => `<option value="${n}"${n === 2 ? " selected" : ""}>${n} người lớn</option>`)
+    .join("");
+  const childOptions = `<option value="0" selected>Không có trẻ</option>` +
+    [1, 2, 3, 4, 5, 6].map((n) => `<option value="${n}">${n} trẻ em</option>`).join("");
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `<div class="modal" id="bookModal" hidden>
+      <div class="modal__backdrop" data-close></div>
+      <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="bookTitle">
+        <button class="modal__close" type="button" aria-label="Đóng" data-close>
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.5" />
+          </svg>
+        </button>
+        <div class="modal__body">
+          <div class="modal__brand">
+            <img src="assets/img/logo-mark.png" alt="Logo Brume Hotel Đà Lạt" width="40" height="49" loading="lazy" decoding="async" />
+            <div>
+              <p class="eyebrow">Yêu cầu đặt phòng</p>
+              <h2 class="h3" id="bookTitle">Gửi Brume thông tin chuyến đi</h2>
+            </div>
+          </div>
+          <p class="muted modal__hint">
+            Điền nhanh thông tin chuyến đi, hệ thống sẽ tự động gửi yêu cầu tới Lễ tân Brume Hotel để liên hệ xác nhận phòng cho bạn trong ít phút.
+          </p>
+          <form id="requestForm" class="request-form" novalidate>
+            <div class="field">
+              <label for="rName">Tên của bạn</label>
+              <input id="rName" name="name" type="text" autocomplete="name" placeholder="VD: Nguyễn An" required />
+            </div>
+            <div class="field">
+              <label for="rPhone">Số điện thoại</label>
+              <input id="rPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx" required />
+            </div>
+            <div class="field">
+              <label for="rCi">Nhận phòng</label>
+              <input id="rCi" name="checkin" type="date" required />
+            </div>
+            <div class="field">
+              <label for="rCo">Trả phòng</label>
+              <input id="rCo" name="checkout" type="date" required />
+            </div>
+            <p class="request-season field--full" id="requestSeason" aria-live="polite"></p>
+            <div class="field">
+              <label for="rAdults">Người lớn (từ 12 tuổi)</label>
+              <select id="rAdults" name="adults">${adultOptions}</select>
+            </div>
+            <div class="field">
+              <label for="rChildrenYoung">Trẻ dưới 6 tuổi</label>
+              <select id="rChildrenYoung" name="childrenUnderSix">${childOptions}</select>
+            </div>
+            <div class="field">
+              <label for="rChildrenOlder">Trẻ từ 6 đến dưới 12 tuổi</label>
+              <select id="rChildrenOlder" name="childrenSixToEleven">${childOptions}</select>
+            </div>
+            <div class="child-ages field--full" id="childAges" hidden></div>
+            <div class="field">
+              <label for="rRoomCount">Số lượng phòng</label>
+              <select id="rRoomCount" name="roomCount">
+                <option value="1" selected>1 phòng (tiêu chuẩn)</option>
+                <option value="2">2 phòng</option>
+                <option value="3">3 phòng</option>
+                <option value="4">4 phòng</option>
+                <option value="5">Từ 5 phòng trở lên (Khách đoàn)</option>
+              </select>
+            </div>
+            <div class="field" id="roomField1">
+              <label for="rRoom" id="rRoomLabel">Hạng phòng</label>
+              <select id="rRoom" name="room"></select>
+            </div>
+            <div class="field--full" id="extraRoomsContainer" hidden></div>
+            <div class="field">
+              <label for="rVehicle">Phương tiện di chuyển</label>
+              <select id="rVehicle" name="vehicle">
+                <option value="none" selected>Không có xe riêng (đi bộ, taxi)</option>
+                <option value="car_4">🚗 Đi ô tô riêng 4 chỗ (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="car_7">🚙 Đi ô tô riêng 7 chỗ (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="motorbike">🛵 Đi xe máy cá nhân (cần chỗ gửi xe)</option>
+                <option value="rent_bike">🛵 Cần thuê xe máy tại khách sạn</option>
+                <option value="transit">🚌 Xe khách / Máy bay (cần tư vấn đón/gửi đồ)</option>
+              </select>
+            </div>
+            <p class="guest-warning field--full" id="requestGuestWarning" aria-live="polite" hidden></p>
+            <div class="vehicle-hint field--full" id="vehicleHint" role="status" aria-live="polite" hidden></div>
+            <div class="field field--full">
+              <label for="rNote">Ghi chú</label>
+              <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>
+            </div>
+            <div class="request-form__actions field--full">
+              <button class="btn btn--solid" type="submit">Gửi yêu cầu</button>
+              <a class="btn btn--ghost" href="tel:${HOTEL.phone}">Gọi ${HOTEL.phoneLabel}</a>
+            </div>
+          </form>
+          <div class="request-result" id="requestResult" hidden>
+            <div class="request-result__status" id="requestStatus">
+              <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Đã tự động gửi thông tin đặt phòng tới <strong>Email Lễ tân Brume Hotel</strong>! Lễ tân sẽ liên hệ xác nhận phòng cho bạn trong ít phút.</span>
+            </div>
+            <p class="request-result__label">Nội dung yêu cầu đặt phòng</p>
+            <pre id="requestText" class="request-result__text"></pre>
+            <div class="request-result__actions">
+              <a class="btn btn--solid" id="zaloBtn" href="${HOTEL.zalo}" target="_blank" rel="noopener noreferrer">Nhắn Zalo cho Lễ tân</a>
+              <button class="btn btn--ghost" type="button" id="copyBtn">Sao chép lại</button>
+              <button class="btn btn--quiet" type="button" id="backBtn">Sửa thông tin</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`
+  );
+}
+
 function openBooking(prefill = {}) {
+  ensureBookModal();
   const modal = $("#bookModal") || bookModal;
   const form = $("#requestForm") || requestForm;
   if (!modal) return;
@@ -1465,6 +1586,7 @@ function initGlobalEvents() {
 
     const openBook = e.target.closest("[data-open-book]");
     if (openBook) {
+      if (document.body.classList.contains && document.body.classList.contains("nav-open")) closeNav();
       const openModalEl = $(".modal:not([hidden])");
       if (openModalEl) closeModal(openModalEl);
       openBooking();
@@ -1632,6 +1754,7 @@ function observeReveals() {
 function init() {
   const yr = $("#year");
   if (yr) yr.textContent = new Date().getFullYear();
+  ensureBookModal();
   initDates();
   renderRooms();
   renderPriceTable();
@@ -1644,6 +1767,9 @@ function init() {
   initGlobalEvents();
   initHeader();
   initBookBar();
+  if (!$("#bookForm") && $("#rCi") && $("#rCo")) {
+    updateSeasonFromDates($("#rCi").value, $("#rCo").value);
+  }
   observeReveals();
   // Ẩn nội dung dự phòng cả bằng thuộc tính HTML, tránh hiện trùng khi CSS bị lưu đệm cũ.
   $$(".fallback-content").forEach((el) => { el.hidden = true; });
