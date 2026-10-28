@@ -486,8 +486,8 @@ function roomSheetHTML(room) {
           <tbody>
             <tr><th scope="row">Thấp điểm</th><td>${vnd(room.prices.low[0])}</td><td>${vnd(room.prices.low[1])}</td></tr>
             <tr><th scope="row">Cao điểm</th><td>${vnd(room.prices.high[0])}</td><td>${vnd(room.prices.high[1])}</td></tr>
-            <tr><th scope="row">Lễ</th><td colspan="2">${vnd(room.prices.peak[0])} · giá riêng</td></tr>
-            <tr><th scope="row">Tết</th><td colspan="2">${vnd(room.prices.peak[1])} · giá riêng</td></tr>
+            <tr><th scope="row">Lễ</th><td colspan="2"><span class="mini-table__note">giá riêng</span>${vnd(room.prices.peak[0])}</td></tr>
+            <tr><th scope="row">Tết</th><td colspan="2"><span class="mini-table__note">giá riêng</span>${vnd(room.prices.peak[1])}</td></tr>
           </tbody>
         </table>
         <div class="room-sheet__actions">
