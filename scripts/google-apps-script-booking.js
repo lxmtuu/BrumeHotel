@@ -17,7 +17,7 @@
  */
 
 // CẤU HÌNH ĐỊA CHỈ EMAIL NHẬN THÔNG BÁO (có thể điền 1 hoặc nhiều email cách nhau bởi dấu phẩy)
-const EMAIL_LE_TAN = "brumedalathotel@gmail.com"; // <-- THAY EMAIL CỦA BẠN VÀO ĐÂY
+const EMAIL_LE_TAN = "lexuanminhtufw@gmail.com"; // Email Lễ tân nhận thông báo đặt phòng
 
 function doPost(e) {
   try {
@@ -79,7 +79,7 @@ function doPost(e) {
     ]);
 
     // GỬI EMAIL HTML THÔNG BÁO CHO LỄ TÂN
-    if (EMAIL_LE_TAN && EMAIL_LE_TAN !== "brumedalathotel@gmail.com") {
+    if (EMAIL_LE_TAN) {
       sendBookingEmail(data, nowStr);
     }
 

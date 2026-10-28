@@ -1,5 +1,6 @@
 # Hướng Dẫn Cài Đặt Tự Động Gửi Email Đặt Phòng Về Lễ Tân
 **Khách sạn:** Brume Hotel Đà Lạt — 44 Hồ Tùng Mậu  
+**Email nhận thông báo hiện tại:** `lexuanminhtufw@gmail.com`  
 **Chi phí:** 100% Miễn phí trọn đời (sử dụng Google Sheets & Google Apps Script chính chủ của Google)
 
 ---
@@ -9,50 +10,55 @@
 2. **Khách hàng**: Lập tức thấy thông báo thành công đẹp mắt:  
    *"✓ Đã chuyển thông tin tới Lễ tân Brume Hotel thành công! Lễ tân sẽ gọi điện hoặc nhắn Zalo xác nhận phòng cho bạn trong ít phút."*
 3. **Lễ tân Khách sạn**:
-   * Nhận ngay một **Email HTML thông báo đặt phòng mới** gửi thẳng vào hòm thư Gmail của lễ tân.
+   * Nhận ngay một **Email HTML thông báo đặt phòng mới** gửi thẳng vào hòm thư Gmail của lễ tân (`lexuanminhtufw@gmail.com`).
    * Email có sẵn 2 nút: **"📞 Gọi khách ngay"** và **"💬 Mở Zalo nhắn khách"** để lễ tân xử lý chỉ bằng 1 cú chạm trên điện thoại.
    * Đồng thời, 1 dòng dữ liệu mới tự động lưu vào file **Google Sheets** để khách sạn theo dõi lịch phòng tổng thể.
 
 ---
 
-## 🛠️ Hướng dẫn 3 bước cài đặt (Mất khoảng 3 - 5 phút)
+## 📊 File Google Sheets Quản Lý Đặt Phòng (Đã tạo sẵn)
+Tớ đã khởi tạo sẵn bảng Google Sheet chuyên nghiệp cho khách sạn Brume Hotel:
+👉 **Link bảng tính:** [Brume Hotel - Quản Lý Đặt Phòng](https://docs.google.com/spreadsheets/d/106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU/edit)
 
-### Bước 1: Tạo file Google Sheets
-1. Đăng nhập tài khoản Google của khách sạn (ví dụ: `brumedalathotel@gmail.com`).
-2. Truy cập [Google Sheets](https://sheets.google.com) và tạo một trang tính mới.
-3. Đổi tên trang tính thành: **"Brume Hotel - Quản lý đặt phòng"**.
-
----
-
-### Bước 2: Dán mã Script & Nhập Email Lễ tân
-1. Trên thanh menu của Google Sheets, chọn **Tiện ích mở rộng** (Extensions) ➔ **Apps Script**.
-2. Xóa hết tất cả các dòng chữ mặc định đang có.
-3. Mở file `scripts/google-apps-script-booking.js` trong thư mục này, **copy toàn bộ nội dung** và dán vào Apps Script.
-4. Tìm dòng số 20:
-   ```javascript
-   const EMAIL_LE_TAN = "brumedalathotel@gmail.com";
-   ```
-   **Thay bằng địa chỉ email thực tế của Lễ tân** (nếu muốn gửi cho nhiều người, có thể điền các email cách nhau bằng dấu phẩy: `"letan1@gmail.com, quanly@gmail.com"`).
-5. Bấm biểu tượng 💾 **Lưu** (Save).
+Bảng tính đã có sẵn:
+- 14 cột tiêu đề chuẩn hóa (Thời gian, Họ tên, SĐT, Check-in, Check-out, Số đêm, Hạng phòng, Số lượng khách, Độ tuổi trẻ em, Phương tiện gửi xe, Ghi chú, Trạng thái).
+- Màu xanh rừng thông đặc trưng của Brume Hotel `#16231e` sang trọng.
+- Cột **Trạng thái xử lý** có sẵn menu chọn nhanh: *Chưa liên hệ, Đã gọi xác nhận, Đã cọc, Đã nhận phòng, Hoàn thành, Đã huỷ*.
 
 ---
 
-### Bước 3: Triển khai Web App (Deploy) để lấy URL Webhook
+## 🛠️ Các bước kích hoạt Webhook (Chỉ mất 2 phút)
+
+### Bước 1: Mở Apps Script từ Google Sheets
+1. Mở file [Brume Hotel - Quản Lý Đặt Phòng](https://docs.google.com/spreadsheets/d/106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU/edit).
+2. Trên thanh menu trên cùng, bấm chọn **Tiện ích mở rộng** (Extensions) ➔ **Apps Script**.
+
+---
+
+### Bước 2: Dán mã Script
+1. Xóa hết các dòng chữ mặc định đang có trong ô soạn thảo (`function myFunction() {...}`).
+2. Mở file `scripts/google-apps-script-booking.js` trong thư mục mã nguồn website, **copy toàn bộ nội dung** và dán vào Apps Script.
+   *(Mã đã được cấu hình sẵn email nhận: `const EMAIL_LE_TAN = "lexuanminhtufw@gmail.com";`)*
+3. Bấm biểu tượng 💾 **Lưu** (Save) trên thanh công cụ (hoặc nhấn Ctrl+S / Cmd+S).
+
+---
+
+### Bước 3: Triển khai Web App (Deploy) để lấy URL
 1. Ở góc trên bên phải màn hình Apps Script, bấm nút màu xanh **Triển khai** (Deploy) ➔ chọn **Tùy chọn triển khai mới** (New deployment).
-2. Nhấn vào biểu tượng bánh răng ⚙️ bên cạnh "Chọn loại", chọn **Ứng dụng web** (Web app).
+2. Nhấn vào biểu tượng bánh răng ⚙️ bên cạnh dòng "Chọn loại" (Select type), chọn **Ứng dụng web** (Web app).
 3. Điền các mục như sau:
    * **Mô tả (Description):** `Brume Booking Webhook`
    * **Thực thi dưới dạng (Execute as):** `Tôi (email của bạn)`
-   * **Người có quyền truy cập (Who has access):** Chọn **Bất kỳ ai (Anyone)** *(Rất quan trọng: Phải chọn Anyone để website gửi dữ liệu được mà không bị chặn quyền).*
-4. Bấm **Triển khai** (Deploy).
-   * *Google sẽ hiện thông báo yêu cầu cấp quyền (Review permissions), bạn bấm chọn tài khoản của mình ➔ Bấm "Advanced" (Nâng cao) ➔ Bấm "Go to Untitled project (unsafe)" ➔ Bấm "Allow" (Cho phép).*
+   * **Người có quyền truy cập (Who has access):** Chọn **Bất kỳ ai (Anyone)** *(Bắt buộc chọn Anyone để website gửi yêu cầu mà không bị Google chặn quyền).*
+4. Bấm nút **Triển khai** (Deploy).
+   * *Google sẽ hiện cửa sổ yêu cầu cấp quyền (Review permissions), bạn bấm chọn tài khoản Google của mình ➔ Bấm "Advanced" (Nâng cao) ➔ Bấm "Go to Untitled project (unsafe)" ➔ Bấm "Allow" (Cho phép).*
 5. Sao chép dòng **URL ứng dụng web** (Web app URL), có dạng:
    `https://script.google.com/macros/s/AKfycbx.../exec`
 
 ---
 
-### Bước 4: Dán URL vào Website
-Mở file `assets/js/app.js` trên website, tìm đoạn đầu:
+### Bước 4: Cập nhật URL vào Website
+Mở file `assets/js/app.js` trên website (hoặc gửi URL đó cho tớ để tớ dán giúp bạn), thay vào dòng `bookingEndpoint`:
 ```javascript
 const HOTEL = {
   phone: "0778888525",
@@ -60,8 +66,10 @@ const HOTEL = {
   zalo: "https://zalo.me/0778888525",
   facebook: "https://www.facebook.com/profile.php?id=61588141471436",
   maps: "https://www.google.com/maps/dir/...",
-  // DÁN URL BƯỚC 3 VÀO ĐÂY:
+  // Dán Web App URL của Bước 3 vào đây:
   bookingEndpoint: "https://script.google.com/macros/s/AKfycbx.../exec",
 };
 ```
-👉 Lưu file lại. Từ thời điểm này, mỗi khi có khách đặt phòng trên web, **Email sẽ tự động bay về hòm thư lễ tân ngay lập tức**!
+Sau khi gắn URL, mọi yêu cầu từ website sẽ ngay lập tức:
+- 📩 Gửi email thông báo HTML có nút Gọi & Zalo về `lexuanminhtufw@gmail.com`.
+- 📊 Tự động điền 1 dòng mới vào file Google Sheets [Brume Hotel - Quản Lý Đặt Phòng](https://docs.google.com/spreadsheets/d/106nU1qDQD_5B8yjgsBpKXB2VGU_81pVuUeDDKVZ_AfU/edit).
