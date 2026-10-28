@@ -2066,6 +2066,34 @@ body.nav-open .burger span:last-child {
   grid-column: 1 / -1;
 }
 
+.vehicle-hint {
+  padding: 12px 16px;
+  background: rgba(201, 154, 94, 0.12);
+  border: 1px solid var(--brass);
+  border-radius: 6px;
+  color: var(--pine);
+  font-size: 13px;
+  line-height: 1.6;
+  margin-block: 4px 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  animation: fadeIn 0.3s ease both;
+}
+
+.vehicle-hint svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--brass-2);
+  margin-top: 1px;
+}
+
+.vehicle-hint strong {
+  color: var(--pine-2);
+  font-weight: 600;
+}
+
 .request-form__actions {
   display: flex;
   gap: 10px;

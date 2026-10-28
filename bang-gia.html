@@ -429,7 +429,18 @@
               <label for="rRoom">Hạng phòng</label>
               <select id="rRoom" name="room"></select>
             </div>
+            <div class="field">
+              <label for="rVehicle">Phương tiện di chuyển</label>
+              <select id="rVehicle" name="vehicle">
+                <option value="none" selected>Không có xe riêng (đi bộ, taxi)</option>
+                <option value="car">🚗 Đi ô tô riêng (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="motorbike">🛵 Đi xe máy cá nhân (cần chỗ gửi xe)</option>
+                <option value="rent_bike">🛵 Cần thuê xe máy tại khách sạn</option>
+                <option value="transit">🚌 Xe khách / Máy bay (cần tư vấn đón/gửi đồ)</option>
+              </select>
+            </div>
             <p class="guest-warning field--full" id="requestGuestWarning" aria-live="polite" hidden></p>
+            <div class="vehicle-hint field--full" id="vehicleHint" role="status" aria-live="polite" hidden></div>
             <div class="field field--full">
               <label for="rNote">Ghi chú</label>
               <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>

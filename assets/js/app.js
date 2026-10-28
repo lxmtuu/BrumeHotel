@@ -688,6 +688,40 @@ function syncRoomChoice(fromModal = false) {
   updateGuestWarnings();
 }
 
+const VEHICLE_HINTS = {
+  car: {
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14v-5l-2-6H7L5 12v5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/><path d="M7 12h10" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    text: "<strong>Khách đi ô tô:</strong> Khách sạn tại 44 Hồ Tùng Mậu có hỗ trợ tư vấn chỗ đỗ và hướng dẫn bãi gửi xe an toàn (có bảo vệ) gần khách sạn. Lễ tân sẽ liên hệ sắp xếp và hướng dẫn đường đi thuận tiện nhất cho bạn trước khi đến.",
+  },
+  motorbike: {
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6h3m-6 5.5 3-5.5h-4l-3 6.5H5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    text: "<strong>Khách đi xe máy:</strong> Khách sạn có khu vực để xe máy an toàn, miễn phí có mái che dành riêng cho khách lưu trú.",
+  },
+  rent_bike: {
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6h3m-6 5.5 3-5.5h-4l-3 6.5H5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    text: "<strong>Cần thuê xe máy tại Đà Lạt:</strong> Brume hỗ trợ kết nối xe máy (xe ga & xe số đời mới) giao nhận tận sảnh khách sạn với giá ưu đãi, kèm mũ bảo hiểm.",
+  },
+  transit: {
+    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="14.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="14.5" r="1.5" fill="currentColor"/><path d="M3 10h18" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+    text: "<strong>Khách đi máy bay / xe khách:</strong> Khách sạn nhận gửi hành lý miễn phí nếu bạn đến sớm trước 14:00, đồng thời hỗ trợ tư vấn xe đưa đón sân bay Liên Khương và xe trung chuyển bến xe.",
+  },
+};
+
+function syncVehicleHint() {
+  const vEl = $("#rVehicle");
+  const hintEl = $("#vehicleHint");
+  if (!hintEl) return;
+  const val = vEl ? vEl.value : "";
+  const info = VEHICLE_HINTS[val];
+  if (info) {
+    hintEl.innerHTML = `${info.icon}<div>${info.text}</div>`;
+    hintEl.hidden = false;
+  } else {
+    hintEl.hidden = true;
+    hintEl.innerHTML = "";
+  }
+}
+
 function initGuestFields() {
   ["#adults", "#childrenYoung", "#childrenOlder"].forEach((selector) => {
     const el = $(selector);
@@ -701,7 +735,12 @@ function initGuestFields() {
   if (rtype) rtype.addEventListener("change", () => syncRoomChoice());
   const rRoom = $("#rRoom");
   if (rRoom) rRoom.addEventListener("change", () => syncRoomChoice(true));
+  const rVehicle = $("#rVehicle");
+  if (rVehicle) {
+    rVehicle.addEventListener("change", syncVehicleHint);
+  }
   syncGuestCounts();
+  syncVehicleHint();
 }
 
 // Ngày đặt phòng được tính theo lịch tại khách sạn, không theo múi giờ của khách.
@@ -858,8 +897,10 @@ function openBooking(prefill = {}) {
   if (prefill.childrenYoung !== undefined && $("#rChildrenYoung")) $("#rChildrenYoung").value = prefill.childrenYoung;
   if (prefill.childrenOlder !== undefined && $("#rChildrenOlder")) $("#rChildrenOlder").value = prefill.childrenOlder;
   if (Object.prototype.hasOwnProperty.call(prefill, "room") && $("#rRoom")) $("#rRoom").value = prefill.room;
+  if (prefill.vehicle && $("#rVehicle")) $("#rVehicle").value = prefill.vehicle;
   syncRoomChoice(true);
   syncGuestCounts(true);
+  syncVehicleHint();
   const rCi = $("#rCi");
   if (rCi) rCi.min = todayISO();
   syncCheckoutMin("#rCi", "#rCo");
@@ -944,6 +985,17 @@ function buildMessage() {
       .map((select) => select.value === "0" ? "dưới 1 tuổi" : `${select.value} tuổi`);
     if (ages.length) lines.push(`• Tuổi trẻ ${label}: ${ages.join(", ")}`);
   });
+  const vehicleEl = $("#rVehicle");
+  const vehicle = vehicleEl ? vehicleEl.value : "";
+  const vehicleMap = {
+    car: "Đi ô tô riêng (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    motorbike: "Đi xe máy cá nhân (cần chỗ gửi xe tại khách sạn)",
+    rent_bike: "Cần thuê xe máy tại khách sạn (giao xe tại khách sạn)",
+    transit: "Đi máy bay / xe khách (nhờ tư vấn đón / gửi hành lý sớm)",
+  };
+  if (vehicle && vehicleMap[vehicle]) {
+    lines.push(`• Phương tiện: ${vehicleMap[vehicle]}`);
+  }
   lines.push(`• Tên: ${name}`, `• Điện thoại: ${phone}`);
   if (note) lines.push(`• Ghi chú: ${note}`);
   lines.push("", "Nhờ Brume kiểm tra phòng trống và báo giá giúp mình. Cảm ơn!");

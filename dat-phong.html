@@ -221,6 +221,32 @@
               <a class="btn btn--outline" href="https://zalo.me/0778888525" target="_blank" rel="noopener">Nhắn tin Zalo trực tiếp</a>
             </div>
           </div>
+
+          <!-- Vehicle Guidance Card -->
+          <div style="background: var(--bone-2); border: 1px solid var(--line); border-radius: 6px; padding: clamp(24px, 4vw, 40px); margin-top: 30px;">
+            <p class="eyebrow">Dành cho khách có phương tiện</p>
+            <h2 class="h3" style="margin-top: 6px;">Tư vấn Chỗ gửi xe &amp; Di chuyển tại Brume</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;">
+              <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 20px;">
+                <h4 style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: var(--ink);">
+                  <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; color: var(--brass-2);" aria-hidden="true"><path d="M5 17h14v-5l-2-6H7L5 12v5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/><path d="M7 12h10" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                  Khách đi xe ô tô riêng
+                </h4>
+                <p style="font-size: 13.5px; line-height: 1.6; color: var(--ink-2); margin: 0;">
+                  Đường Hồ Tùng Mậu rộng thoáng, xe 4–16 chỗ lưu thông dễ dàng. Khách sạn hỗ trợ hướng dẫn bãi gửi ô tô an toàn (có camera/bảo vệ) ngay gần khách sạn. Khi đặt phòng, quý khách chỉ cần chọn mục <strong>Đi ô tô riêng</strong> để lễ tân chuẩn bị trước.
+                </p>
+              </div>
+              <div style="background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 20px;">
+                <h4 style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 16px; font-weight: 600; color: var(--ink);">
+                  <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; color: var(--brass-2);" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6h3m-6 5.5 3-5.5h-4l-3 6.5H5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                  Khách đi xe máy / Thuê xe máy
+                </h4>
+                <p style="font-size: 13.5px; line-height: 1.6; color: var(--ink-2); margin: 0;">
+                  Brume có khu vực đỗ xe máy riêng an toàn, miễn phí cho khách. Nếu bạn cần thuê xe máy ngắm cảnh Đà Lạt, Brume liên kết đối tác uy tín giao xe tận sảnh khách sạn (xe số, tay ga đời mới, mũ bảo hiểm sạch sẽ).
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -378,7 +404,18 @@
               <label for="rRoom">Hạng phòng</label>
               <select id="rRoom" name="room"></select>
             </div>
+            <div class="field">
+              <label for="rVehicle">Phương tiện di chuyển</label>
+              <select id="rVehicle" name="vehicle">
+                <option value="none" selected>Không có xe riêng (đi bộ, taxi)</option>
+                <option value="car">🚗 Đi ô tô riêng (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="motorbike">🛵 Đi xe máy cá nhân (cần chỗ gửi xe)</option>
+                <option value="rent_bike">🛵 Cần thuê xe máy tại khách sạn</option>
+                <option value="transit">🚌 Xe khách / Máy bay (cần tư vấn đón/gửi đồ)</option>
+              </select>
+            </div>
             <p class="guest-warning field--full" id="requestGuestWarning" aria-live="polite" hidden></p>
+            <div class="vehicle-hint field--full" id="vehicleHint" role="status" aria-live="polite" hidden></div>
             <div class="field field--full">
               <label for="rNote">Ghi chú</label>
               <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>
