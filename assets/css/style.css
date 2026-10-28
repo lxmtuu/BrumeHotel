@@ -2522,8 +2522,12 @@ body:not(.js-ready) #galleryGrid {
     inset: 0;
     z-index: 90;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 26px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: calc(var(--topbar-h) + 80px) var(--gutter) 32px;
     background: var(--pine-2);
     color: var(--bone);
     font-family: var(--serif);
@@ -2545,12 +2549,23 @@ body:not(.js-ready) #galleryGrid {
     transition-delay: 0s;
   }
 
+  /* Căn giữa khi đủ chỗ, nhưng vẫn cuộn đến được mọi mục trên màn hình thấp. */
+  .nav > a,
+  .nav__foot {
+    flex-shrink: 0;
+  }
+
+  .nav > a:first-child {
+    margin-top: auto;
+  }
+
   .nav__foot {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 22px;
     margin-top: 22px;
+    margin-bottom: auto;
     padding-top: 22px;
     border-top: 1px solid rgba(247, 242, 231, 0.16);
     font-family: var(--sans);
@@ -2592,15 +2607,18 @@ body:not(.js-ready) #galleryGrid {
     overflow: hidden;
   }
 
-  /* tránh transform / backdrop-filter tạo containing block cho menu fixed */
+  /* Menu fixed phải dựa vào viewport, kể cả khi header đã chuyển sang is-stuck.
+     Tắt cả transition để transform/backdrop-filter không còn tạo containing block
+     trong lúc menu đang mở. */
   body.nav-open .site-top,
-  body.nav-open .header {
+  body.nav-open .site-top .header {
     transform: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    transition: none;
   }
 
-  body.nav-open .header {
+  body.nav-open .site-top .header {
     color: var(--bone);
     background: transparent;
     border-color: transparent;

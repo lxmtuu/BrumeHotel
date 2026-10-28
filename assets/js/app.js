@@ -1659,7 +1659,10 @@ function initHeader() {
       document.body.classList.toggle("nav-open");
       const open = document.body.classList.contains("nav-open");
       const nav = $("#nav");
-      if (nav) nav.classList.toggle("is-open", open);
+      if (nav) {
+        if (open) nav.scrollTop = 0;
+        nav.classList.toggle("is-open", open);
+      }
       burger.setAttribute("aria-expanded", String(open));
       burger.setAttribute("aria-label", open ? "Đóng menu" : "Mở menu");
     });
