@@ -1002,6 +1002,31 @@ function buildMessage() {
   return lines.join("\n");
 }
 
+async function copyTextToClipboard(text) {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {}
+  try {
+    if (typeof document !== "undefined" && document.createElement) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const successful = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return successful;
+    }
+  } catch {}
+  return false;
+}
+
 function initRequestForm() {
   const form = $("#requestForm") || requestForm;
   if (!form) return;
@@ -1013,13 +1038,29 @@ function initRequestForm() {
     syncCheckoutMin("#rCi", "#rCo", false);
     if (!form.reportValidity()) return;
 
+    const message = buildMessage();
     const reqText = $("#requestText");
-    if (reqText) reqText.textContent = buildMessage();
+    if (reqText) reqText.textContent = message;
     form.hidden = true;
     const reqRes = $("#requestResult");
     if (reqRes) reqRes.hidden = false;
+
+    // Tự động sao chép thông tin vào bộ nhớ tạm
+    copyTextToClipboard(message);
+
+    // Tự động mở Zalo tới số điện thoại của Brume Hotel
+    const zaloUrl = `https://zalo.me/${HOTEL.phone}`;
+    try {
+      if (typeof window !== "undefined" && typeof window.open === "function") {
+        window.open(zaloUrl, "_blank", "noopener,noreferrer");
+      }
+    } catch {}
+
     const copy = $("#copyBtn");
-    if (copy) copy.focus({ preventScroll: true });
+    if (copy) {
+      copy.textContent = "Sao chép lại";
+      copy.focus({ preventScroll: true });
+    }
   });
 
   const rCi = $("#rCi");
@@ -1039,18 +1080,20 @@ function initRequestForm() {
     copy.addEventListener("click", async () => {
       const reqText = $("#requestText");
       const text = reqText ? reqText.textContent : "";
-      try {
-        await navigator.clipboard.writeText(text);
+      const copied = await copyTextToClipboard(text);
+      if (copied) {
         copy.textContent = "Đã sao chép ✓";
-      } catch {
-        if (reqText) {
+      } else if (reqText) {
+        try {
           const range = document.createRange();
           range.selectNodeContents(reqText);
           const sel = window.getSelection();
           sel.removeAllRanges();
           sel.addRange(range);
+          copy.textContent = "Chọn & Ctrl+C để chép";
+        } catch {
+          copy.textContent = "Đã sao chép";
         }
-        copy.textContent = "Chọn & Ctrl+C để chép";
       }
     });
   }

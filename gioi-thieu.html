@@ -375,17 +375,21 @@
               <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>
             </div>
             <div class="request-form__actions field--full">
-              <button class="btn btn--solid" type="submit">Tạo nội dung tin nhắn</button>
+              <button class="btn btn--solid" type="submit">Gửi yêu cầu qua Zalo ngay</button>
               <a class="btn btn--ghost" href="tel:0778888525">Gọi 077 888 8525</a>
             </div>
           </form>
 
           <div class="request-result" id="requestResult" hidden>
-            <p class="request-result__label">Nội dung tin nhắn</p>
+            <div class="request-result__status" id="requestStatus">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Đã tự động sao chép thông tin &amp; mở Zalo! Bạn chỉ cần bấm <strong>Dán (Ctrl + V / Giữ màn hình chọn Dán)</strong> để gửi cho lễ tân.</span>
+            </div>
+            <p class="request-result__label">Nội dung tin nhắn đã sao chép</p>
             <pre id="requestText" class="request-result__text"></pre>
             <div class="request-result__actions">
-              <button class="btn btn--solid" type="button" id="copyBtn">Sao chép</button>
-              <a class="btn btn--ghost" id="zaloBtn" href="https://zalo.me/0778888525" target="_blank" rel="noopener">Mở Zalo</a>
+              <a class="btn btn--solid" id="zaloBtn" href="https://zalo.me/0778888525" target="_blank" rel="noopener">Mở lại Zalo</a>
+              <button class="btn btn--ghost" type="button" id="copyBtn">Sao chép lại</button>
               <button class="btn btn--quiet" type="button" id="backBtn">Sửa thông tin</button>
             </div>
           </div>

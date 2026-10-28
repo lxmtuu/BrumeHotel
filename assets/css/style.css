@@ -2110,6 +2110,32 @@ body.nav-open .burger span:last-child {
   margin-top: 22px;
 }
 
+.request-result__status {
+  padding: 12px 16px;
+  background: #eaf5ec;
+  border: 1px solid #2e7d32;
+  border-radius: 6px;
+  color: #1b5e20;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: fadeIn 0.35s ease both;
+}
+
+.request-result__status svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: #2e7d32;
+}
+
+.request-result__status strong {
+  color: #0f3d14;
+}
+
 .request-result__label {
   font-size: 10px;
   letter-spacing: 0.2em;
