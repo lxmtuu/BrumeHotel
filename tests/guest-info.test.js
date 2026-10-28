@@ -164,6 +164,16 @@ test('vehicle choice updates message and advice for reception', () => {
   get('requestForm').emit('submit');
   assert.match(get('requestText').textContent, /• Phương tiện: Đi ô tô riêng \(nhờ lễ tân tư vấn chỗ đỗ \/ bãi gửi xe\)/);
 
+  get('rVehicle').value = 'car_4';
+  get('rVehicle').emit('change');
+  assert.equal(get('vehicleHint').hidden, false);
+  assert.match(get('vehicleHint').innerHTML, /ô tô 4 chỗ/);
+
+  get('rVehicle').value = 'car_7';
+  get('rVehicle').emit('change');
+  assert.equal(get('vehicleHint').hidden, false);
+  assert.match(get('vehicleHint').innerHTML, /ô tô 7 chỗ/);
+
   get('rVehicle').value = 'motorbike';
   get('rVehicle').emit('change');
   assert.match(get('vehicleHint').innerHTML, /khu vực để xe máy an toàn/);

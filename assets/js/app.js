@@ -691,11 +691,20 @@ function syncRoomChoice(fromModal = false) {
   updateGuestWarnings();
 }
 
+const CAR_HINT_4 = {
+  icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14v-5l-2-6H7L5 12v5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/><path d="M7 12h10" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+  text: "<strong>Khách đi ô tô 4 chỗ:</strong> Khách sạn tại 44 Hồ Tùng Mậu có hỗ trợ tư vấn chỗ đỗ và hướng dẫn bãi gửi xe an toàn (có bảo vệ) gần khách sạn. Lễ tân sẽ liên hệ hướng dẫn đường đi thuận tiện nhất cho bạn trước khi đến.",
+};
+
+const CAR_HINT_7 = {
+  icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14v-5l-2-6H7L5 12v5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/><path d="M7 12h10" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
+  text: "<strong>Khách đi ô tô 7 chỗ:</strong> Khách sạn tại 44 Hồ Tùng Mậu có hỗ trợ tư vấn chỗ đỗ và bãi gửi xe rộng rãi, an toàn (có bảo vệ) phù hợp xe 7 chỗ gần khách sạn. Lễ tân sẽ liên hệ hướng dẫn vị trí đỗ thuận tiện nhất.",
+};
+
 const VEHICLE_HINTS = {
-  car: {
-    icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 17h14v-5l-2-6H7L5 12v5Z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.5" cy="16.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="16.5" r="1.5" fill="currentColor"/><path d="M7 12h10" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
-    text: "<strong>Khách đi ô tô:</strong> Khách sạn tại 44 Hồ Tùng Mậu có hỗ trợ tư vấn chỗ đỗ và hướng dẫn bãi gửi xe an toàn (có bảo vệ) gần khách sạn. Lễ tân sẽ liên hệ sắp xếp và hướng dẫn đường đi thuận tiện nhất cho bạn trước khi đến.",
-  },
+  car: CAR_HINT_4,
+  car_4: CAR_HINT_4,
+  car_7: CAR_HINT_7,
   motorbike: {
     icon: `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="18.5" cy="17.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 6h3m-6 5.5 3-5.5h-4l-3 6.5H5.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`,
     text: "<strong>Khách đi xe máy:</strong> Khách sạn có khu vực để xe máy an toàn, miễn phí có mái che dành riêng cho khách lưu trú.",
@@ -992,6 +1001,8 @@ function buildMessage() {
   const vehicle = vehicleEl ? vehicleEl.value : "";
   const vehicleMap = {
     car: "Đi ô tô riêng (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    car_4: "Đi ô tô riêng 4 chỗ (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    car_7: "Đi ô tô riêng 7 chỗ (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
     motorbike: "Đi xe máy cá nhân (cần chỗ gửi xe tại khách sạn)",
     rent_bike: "Cần thuê xe máy tại khách sạn (giao xe tại khách sạn)",
     transit: "Đi máy bay / xe khách (nhờ tư vấn đón / gửi hành lý sớm)",
@@ -1056,6 +1067,8 @@ function getBookingPayload() {
   const vehicle = vehicleEl ? vehicleEl.value : "";
   const vehicleMap = {
     car: "Đi ô tô riêng (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    car_4: "Đi ô tô riêng 4 chỗ (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
+    car_7: "Đi ô tô riêng 7 chỗ (nhờ lễ tân tư vấn chỗ đỗ / bãi gửi xe)",
     motorbike: "Đi xe máy cá nhân (cần chỗ gửi xe tại khách sạn)",
     rent_bike: "Cần thuê xe máy tại khách sạn (giao xe tại khách sạn)",
     transit: "Đi máy bay / xe khách (nhờ tư vấn đón / gửi hành lý sớm)",
@@ -1106,10 +1119,16 @@ function initRequestForm() {
     // Tự động sao chép thông tin vào bộ nhớ tạm
     copyTextToClipboard(message);
 
-    // Cập nhật link SMS tự động điền sẵn 100% nội dung
-    const smsBtn = $("#smsBtn");
-    if (smsBtn) {
-      smsBtn.href = `sms:${HOTEL.phone}?&body=${encodeURIComponent(message)}`;
+    // Cập nhật link Zalo cho nút Nhắn Zalo
+    const zaloBtn = $("#zaloBtn");
+    if (zaloBtn) {
+      zaloBtn.href = HOTEL.zalo;
+      zaloBtn.target = "_blank";
+      zaloBtn.rel = "noopener noreferrer";
+      if (typeof zaloBtn.setAttribute === "function") {
+        zaloBtn.setAttribute("target", "_blank");
+        zaloBtn.setAttribute("rel", "noopener noreferrer");
+      }
     }
 
     // Nếu có cấu hình bookingEndpoint (Google Sheets / Email Webhook), tự động gửi ngầm về lễ tân
@@ -1128,14 +1147,6 @@ function initRequestForm() {
       } catch {}
     }
 
-    // Tự động mở Zalo tới số điện thoại của Brume Hotel
-    const zaloUrl = `https://zalo.me/${HOTEL.phone}`;
-    try {
-      if (typeof window !== "undefined" && typeof window.open === "function") {
-        window.open(zaloUrl, "_blank", "noopener,noreferrer");
-      }
-    } catch {}
-
     const copy = $("#copyBtn");
     if (copy) {
       copy.textContent = "Sao chép lại";
@@ -1153,6 +1164,25 @@ function initRequestForm() {
   const rCo = $("#rCo");
   if (rCo) {
     rCo.addEventListener("change", () => syncBookingDates("#rCi", "#rCo", "#ci", "#co"));
+  }
+
+  const zaloBtn = $("#zaloBtn");
+  if (zaloBtn) {
+    zaloBtn.href = HOTEL.zalo;
+    zaloBtn.target = "_blank";
+    zaloBtn.rel = "noopener noreferrer";
+    if (typeof zaloBtn.setAttribute === "function") {
+      zaloBtn.setAttribute("target", "_blank");
+      zaloBtn.setAttribute("rel", "noopener noreferrer");
+    }
+    zaloBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      try {
+        window.open(HOTEL.zalo, "_blank", "noopener,noreferrer");
+      } catch {
+        window.location.href = HOTEL.zalo;
+      }
+    });
   }
 
   const copy = $("#copyBtn");

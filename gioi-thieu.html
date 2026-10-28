@@ -298,7 +298,7 @@
           <p class="eyebrow">Yêu cầu đặt phòng</p>
           <h2 class="h3" id="bookTitle">Gửi Brume thông tin chuyến đi</h2>
           <p class="muted modal__hint">
-            Điền nhanh vài thông tin, Brume sẽ phản hồi qua Zalo hoặc điện thoại. Trang này không tự gửi đi — bạn sao chép nội dung rồi dán vào Zalo, hoặc gọi trực tiếp.
+            Điền nhanh thông tin chuyến đi, hệ thống sẽ tự động gửi yêu cầu tới Lễ tân Brume Hotel để liên hệ xác nhận phòng cho bạn trong ít phút.
           </p>
           <form id="requestForm" class="request-form" novalidate>
             <div class="field">
@@ -362,7 +362,8 @@
               <label for="rVehicle">Phương tiện di chuyển</label>
               <select id="rVehicle" name="vehicle">
                 <option value="none" selected>Không có xe riêng (đi bộ, taxi)</option>
-                <option value="car">🚗 Đi ô tô riêng (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="car_4">🚗 Đi ô tô riêng 4 chỗ (cần tư vấn chỗ đỗ/gửi xe)</option>
+                <option value="car_7">🚙 Đi ô tô riêng 7 chỗ (cần tư vấn chỗ đỗ/gửi xe)</option>
                 <option value="motorbike">🛵 Đi xe máy cá nhân (cần chỗ gửi xe)</option>
                 <option value="rent_bike">🛵 Cần thuê xe máy tại khách sạn</option>
                 <option value="transit">🚌 Xe khách / Máy bay (cần tư vấn đón/gửi đồ)</option>
@@ -375,7 +376,7 @@
               <textarea id="rNote" name="note" rows="3" placeholder="Giờ đến, yêu cầu thêm…"></textarea>
             </div>
             <div class="request-form__actions field--full">
-              <button class="btn btn--solid" type="submit">Gửi yêu cầu qua Zalo ngay</button>
+              <button class="btn btn--solid" type="submit">Gửi yêu cầu</button>
               <a class="btn btn--ghost" href="tel:0778888525">Gọi 077 888 8525</a>
             </div>
           </form>
@@ -383,13 +384,12 @@
           <div class="request-result" id="requestResult" hidden>
             <div class="request-result__status" id="requestStatus">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span>Đã tự động sao chép thông tin &amp; mở Zalo! Bạn chỉ cần bấm <strong>Dán (Ctrl + V / Giữ màn hình chọn Dán)</strong> để gửi cho lễ tân.</span>
+              <span>Đã tự động gửi thông tin đặt phòng tới <strong>Email Lễ tân Brume Hotel</strong>! Lễ tân sẽ liên hệ xác nhận phòng cho bạn trong ít phút.</span>
             </div>
-            <p class="request-result__label">Nội dung tin nhắn đã sao chép</p>
+            <p class="request-result__label">Nội dung yêu cầu đặt phòng</p>
             <pre id="requestText" class="request-result__text"></pre>
             <div class="request-result__actions">
-              <a class="btn btn--solid" id="zaloBtn" href="https://zalo.me/0778888525" target="_blank" rel="noopener">Mở lại Zalo</a>
-              <a class="btn btn--brass" id="smsBtn" href="sms:0778888525" title="Tự động điền sẵn toàn bộ tin nhắn trên điện thoại">Gửi qua tin nhắn SMS</a>
+              <a class="btn btn--solid" id="zaloBtn" href="https://zalo.me/0778888525" target="_blank" rel="noopener noreferrer">Nhắn Zalo cho Lễ tân</a>
               <button class="btn btn--ghost" type="button" id="copyBtn">Sao chép lại</button>
               <button class="btn btn--quiet" type="button" id="backBtn">Sửa thông tin</button>
             </div>
