@@ -551,6 +551,33 @@ function openRoom(slug) {
         showRoomImage(currentRoomImgIndex + 1);
       });
     }
+    const mainMedia = $(".room-sheet__main", modal);
+    if (mainMedia) {
+      let touchStartX = 0;
+      mainMedia.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            touchStartX = e.changedTouches[0].screenX;
+          }
+        },
+        { passive: true }
+      );
+      mainMedia.addEventListener(
+        "touchend",
+        (e) => {
+          if (e.changedTouches && e.changedTouches[0]) {
+            const diff = e.changedTouches[0].screenX - touchStartX;
+            if (diff < -35) {
+              showRoomImage(currentRoomImgIndex + 1);
+            } else if (diff > 35) {
+              showRoomImage(currentRoomImgIndex - 1);
+            }
+          }
+        },
+        { passive: true }
+      );
+    }
   }
 }
 
